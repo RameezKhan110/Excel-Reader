@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/carousel_item_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="10dp"
+    android:foreground="?attr/selectableItemBackground"
+    app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/wipCv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        app:cardBackgroundColor="@color/silver"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical">
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="70dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/black"
+                android:fontFamily="@font/poppins_medium"
+                android:rotation="-45"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/txtWordType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins_medium"
+                android:padding="8dp"
+                android:rotation="-45"
+                android:text="Word"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="100dp"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_light"
+                android:rotation="-45"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.13" />
+
+            <View
+
+                android:layout_width="80dp"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_light"
+                android:rotation="-45"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/txtViewCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/back_box"
+                android:fontFamily="@font/poppins_light"
+                android:paddingLeft="16dp"
+                android:paddingTop="8dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="8dp"
+                android:text="Viewed 5 times"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txtReadCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/back_box"
+                android:fontFamily="@font/poppins_light"
+                android:paddingLeft="16dp"
+                android:paddingTop="8dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="8dp"
+                android:text="Read 5 times"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="@id/txtViewCount"
+                app:layout_constraintEnd_toStartOf="@id/txtViewCount"
+                app:layout_constraintTop_toTopOf="@id/txtViewCount" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="vertical"
+                android:padding="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtWordType">
+
+                <TextView
+                    android:id="@+id/txtWord"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_extrabold"
+                    android:text="Scamper"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/poppins_extrabold"
+                    android:text="Meaning"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txtWord" />
+
+                <TextView
+                    android:id="@+id/txtWordMeaning"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:ems="10"
+                    android:fontFamily="@font/poppins_medium"
+                    android:maxLines="3"
+                    android:padding="5dp"
+                    android:text="run with light steps out of fear or excitement run with light steps out of fear or excitement run with light steps out of fear or excitement run with light steps out of fear or excitement"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="@id/tv1"
+                    app:layout_constraintStart_toStartOf="@id/tv1"
+                    app:layout_constraintTop_toBottomOf="@id/tv1" />
+
+                <TextView
+                    android:id="@+id/tv2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:fontFamily="@font/poppins_extrabold"
+                    android:text="Sample Sentence"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txtWordMeaning" />
+
+                <TextView
+                    android:id="@+id/txtSampleSentence"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:ems="10"
+                    android:fontFamily="@font/poppins_medium"
+                    android:maxLines="3"
+                    android:padding="5dp"
+                    android:text="The long hours at work stultified his creativity and imagination"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="@id/tv2"
+                    app:layout_constraintStart_toStartOf="@id/tv2"
+                    app:layout_constraintTop_toBottomOf="@id/tv2">
+
+                </TextView>
+
+                <TextView
+                    android:id="@+id/tv3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:fontFamily="@font/poppins_extrabold"
+                    android:text="Tags"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txtSampleSentence" />
+
+                <TextView
+                    android:id="@+id/txtTags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:ems="10"
+                    android:fontFamily="@font/poppins_medium"
+                    android:maxLines="3"
+                    android:padding="5dp"
+                    android:text="Sports, Casual, Business"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/tv3"
+                    app:layout_constraintStart_toStartOf="@id/tv3"
+                    app:layout_constraintTop_toBottomOf="@id/tv3">
+
+                </TextView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

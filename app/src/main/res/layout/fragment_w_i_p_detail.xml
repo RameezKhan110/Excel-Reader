@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/steel"
+    tools:context=".fragments.WIPDetailFragment">
+
+
+    <ImageView
+        android:id="@+id/imgBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/back_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgBack">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/txtWord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_weight="3"
+                android:fontFamily="@font/poppins_extrabold"
+                tools:text="Scramble"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="40dp"
+                android:id="@+id/ivSpeaker"
+                android:src="@drawable/speaker" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_extrabold"
+                android:text="Meaning" />
+
+            <TextView
+                android:id="@+id/txtMeaning"
+                android:layout_width="wrap_content"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+
+                tools:text="run with light steps out of fear or excitement run with light steps out of fear or excitement"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_extrabold"
+                android:textColor="@color/black"
+                android:text="Sample Sentence" />
+
+            <TextView
+                android:id="@+id/txtSampleSentence"
+                android:layout_width="wrap_content"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                tools:text="The mouse scampered away from the cat into its hole."
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_extrabold"
+                android:textColor="@color/black"
+                android:text="Tags" />
+
+            <TextView
+                android:id="@+id/tvTags"
+                android:layout_width="wrap_content"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                tools:text="Sports, Casual"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_extrabold"
+
+                android:text="Read" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="@font/poppins_medium"
+                android:layout_weight="1"
+                android:id="@+id/txtReadCount"
+                android:gravity="end"
+                android:textColor="@color/black"
+                tools:text="0 times"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_extrabold"
+                android:text="Viewed" />
+
+
+            <TextView
+                android:id="@+id/txtViewCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins_medium"
+                android:gravity="end"
+                android:textColor="@color/black"
+                tools:text="0 times"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_gravity="center"
+            android:id="@+id/btnEdit"
+            android:text="Edit WIP"
+            />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

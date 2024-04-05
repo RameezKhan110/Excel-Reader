@@ -51,8 +51,8 @@ class WIPViewModel : ViewModel() {
         )
     }
 
-    fun updateViewedCount(id: Int, viewCount: Float) = viewModelScope.launch {
-        wipRepository?.updateViewedCount(id, viewCount)
+    fun updateReadCount(id: Int, readCount: Float) = viewModelScope.launch {
+        wipRepository?.updateReadCount(id, readCount)
     }
 
     fun getWIPsWithCustomTag(tag: String): LiveData<List<WIPModel>>? {

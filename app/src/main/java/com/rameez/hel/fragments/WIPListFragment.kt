@@ -90,7 +90,7 @@ class WIPListFragment : Fragment() {
                 showCustomDialog().show()
             }
 
-            imageSearch.setOnClickListener {
+            llSearch.setOnClickListener {
                 findNavController().navigate(R.id.WIPSearchFragment)
             }
 
@@ -110,8 +110,8 @@ class WIPListFragment : Fragment() {
 
                 val layoutManager = recyclerView.layoutManager  as LinearLayoutManager
                 if(newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                    val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                    val firstVisibleItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+                    val lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition()
                     Log.d("TAG", "First visible item position: $firstVisibleItemPosition")
                     Log.d("TAG", "Last visible item position: $lastVisibleItemPosition")
                 }

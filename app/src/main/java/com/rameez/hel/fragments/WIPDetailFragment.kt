@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.rameez.hel.R
-import com.rameez.hel.data.model.WIPModel
 import com.rameez.hel.databinding.FragmentWIPDetailBinding
 import com.rameez.hel.viewmodel.WIPViewModel
 import java.util.Locale
@@ -56,7 +55,7 @@ class WIPDetailFragment : Fragment() {
         }
 
         mBinding.imgBack.setOnClickListener {
-            updateViewCount()
+            updateReadCount()
             findNavController().navigateUp()
         }
 
@@ -79,17 +78,17 @@ class WIPDetailFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                updateViewCount()
+                updateReadCount()
                 findNavController().navigateUp()
             }
 
         })
     }
 
-    private fun updateViewCount() {
-        var viewCount = mBinding.txtViewCount.text.substring(0, mBinding.txtViewCount.text.length - 5).trim().toInt()
-        viewCount += 1
-        wipViewModel.updateViewedCount(id = id, viewCount = viewCount.toFloat())
+    private fun updateReadCount() {
+        var readCount = mBinding.txtReadCount.text.substring(0, mBinding.txtReadCount.text.length - 5).trim().toInt()
+        readCount += 1
+        wipViewModel.updateReadCount(id = id, readCount = readCount.toFloat())
     }
     override fun onDestroyView() {
         super.onDestroyView()

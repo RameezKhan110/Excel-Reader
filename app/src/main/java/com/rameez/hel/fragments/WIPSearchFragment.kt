@@ -1,10 +1,13 @@
 package com.rameez.hel.fragments
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -42,6 +45,9 @@ class WIPSearchFragment : Fragment() {
         wipViewModel.getWIPs()?.observe(viewLifecycleOwner) {
             wipList = it
         }
+
+        mBinding.etSearch.requestFocus()
+        showSoftKeyboard()
 
         mBinding.etSearch.doAfterTextChanged {
             mBinding.noData.visibility = View.GONE
@@ -82,6 +88,11 @@ class WIPSearchFragment : Fragment() {
             rvList.layoutManager = LinearLayoutManager(requireContext())
             rvList.adapter = wipSearchAdapter
         }
+    }
+
+    private fun showSoftKeyboard() {
+        val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.showSoftInput(mBinding.etSearch, InputMethodManager.SHOW_IMPLICIT)
     }
 }
 

@@ -33,8 +33,8 @@ interface WIPDao {
         viewedCount: Float
     )
 
-    @Query("UPDATE WIP_LIST SET displayCount = :viewCount WHERE id = :id")
-    suspend fun updateViewedCount(id: Int, viewCount: Float)
+    @Query("UPDATE WIP_LIST SET readCount = :readCount WHERE id = :id")
+    suspend fun updateReadCount(id: Int, readCount: Float)
 
     @Query("SELECT * FROM WIP_LIST WHERE customTag LIKE '%' || :tag || '%'")
     fun getWIPsWithCustomTag(tag: String): LiveData<List<WIPModel>>

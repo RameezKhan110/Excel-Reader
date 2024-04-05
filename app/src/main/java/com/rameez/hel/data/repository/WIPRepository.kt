@@ -35,8 +35,8 @@ class WIPRepository(private val wipDao: WIPDao) {
         wipDao.updateWIP(id, category,  wip, meaning, sampleSentence, customTag, readCount, viewedCount)
     }
 
-    suspend fun updateViewedCount(id: Int, viewCount: Float) {
-        wipDao.updateViewedCount(id, viewCount)
+    suspend fun updateReadCount(id: Int, readCount: Float) {
+        wipDao.updateReadCount(id, readCount)
     }
 
     fun getWIPsWithCustomTag(tag: String): LiveData<List<WIPModel>> {

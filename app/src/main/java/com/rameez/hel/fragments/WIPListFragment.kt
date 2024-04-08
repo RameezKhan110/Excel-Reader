@@ -2,7 +2,6 @@ package com.rameez.hel.fragments
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
-import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.ContentResolver
 import android.content.Intent
@@ -26,9 +25,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.carousel.CarouselLayoutManager
 import com.rameez.hel.R
-import com.rameez.hel.adapter.CarouselAdapter
+import com.rameez.hel.SharedPref
 import com.rameez.hel.adapter.WIPListAdapter
 import com.rameez.hel.data.model.WIPModel
 import com.rameez.hel.databinding.FragmentWIPListBinding
@@ -58,6 +56,16 @@ class WIPListFragment : Fragment() {
     private lateinit var permissionUtils: PermissionUtils
     private val wipList = arrayListOf<WIPModel>()
 
+    override fun onStart() {
+        super.onStart()
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        SharedPref.appLaunched(requireContext(), false)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -76,9 +84,32 @@ class WIPListFragment : Fragment() {
         setUpRecyclerView()
 
         wipViewModel.getWIPs()?.observe(viewLifecycleOwner) {
-            val shuffledList = it.shuffled()
-            wipListAdapter.submitList(shuffledList)
+//            val shuffledList = it.shuffled()
+            wipListAdapter.submitList(it)
+
         }
+
+        if (SharedPref.isAppLaunched(requireContext())) {
+            lifecycleScope.launch {
+                wipViewModel.getWIPs2()?.forEach {
+                    val incCount = it.displayCount?.toInt()?.plus(1)?.toFloat()
+                    it.id?.let { it1 ->
+                        if (incCount != null) {
+                            wipViewModel.updateViewedCount(it1, incCount)
+                        }
+                    }
+                }
+                SharedPref.appLaunched(requireContext(), false)
+            }
+        }
+
+
+
+
+
+
+
+
 
         mBinding.apply {
 
@@ -98,9 +129,10 @@ class WIPListFragment : Fragment() {
                 findNavController().navigate(R.id.WIPFilterFragment)
             }
         }
-        wipListAdapter.onWipItemClicked = { id ->
+        wipListAdapter.onWipItemClicked = { id, viewCount ->
             val bundle = Bundle()
             bundle.putInt("wip_id", id)
+            bundle.putFloat("view_count", viewCount)
             findNavController().navigate(R.id.WIPDetailFragment, bundle)
         }
 
@@ -108,15 +140,21 @@ class WIPListFragment : Fragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
-                val layoutManager = recyclerView.layoutManager  as LinearLayoutManager
-                if(newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    val firstVisibleItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
-                    val lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val firstVisibleItemPosition =
+                        layoutManager.findFirstCompletelyVisibleItemPosition()
+                    val lastVisibleItemPosition =
+                        layoutManager.findLastCompletelyVisibleItemPosition()
                     Log.d("TAG", "First visible item position: $firstVisibleItemPosition")
                     Log.d("TAG", "Last visible item position: $lastVisibleItemPosition")
                 }
             }
         })
+
+//        wipListAdapter.onIncViewedCount = { id, viewCount ->
+//            wipViewModel.updateViewedCount(id, viewCount)
+//        }
     }
 
     private fun setUpRecyclerView() {
@@ -406,7 +444,11 @@ class WIPListFragment : Fragment() {
             }
 
             override fun onPermissionDenied(neverAskAgain: Boolean) {
-                Toast.makeText(requireContext(), "Please grant permission to import or export .xlsx files", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Please grant permission to import or export .xlsx files",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }

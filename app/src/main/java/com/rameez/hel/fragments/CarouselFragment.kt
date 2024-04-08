@@ -59,7 +59,7 @@ class CarouselFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        SharedPref.isFilterScreenCancelled(requireContext(), false)
+//        SharedPref.isFilterScreenCancelled(requireContext(), false)
         sharedViewModel.categoryList.clear()
         sharedViewModel.tagsList.clear()
         sharedViewModel.readCount = null
@@ -87,7 +87,7 @@ class CarouselFragment : Fragment() {
         mBinding.apply {
 
             ivCancel.setOnClickListener {
-                SharedPref.isFilterScreenCancelled(requireContext(), true)
+//                SharedPref.isFilterScreenCancelled(requireContext(), true)
                 sharedViewModel.isTimerRunning = false
                 sharedViewModel.selectedMins = null
                 sharedViewModel.selectedHours = null

@@ -10,7 +10,8 @@ import com.rameez.hel.databinding.WipListItemLayoutBinding
 
 class WIPListAdapter : ListAdapter<WIPModel, RecyclerView.ViewHolder>(WIPDiffUtil()) {
 
-    var onWipItemClicked: ((Int) -> Unit) ? = null
+    var onWipItemClicked: ((Int, Float) -> Unit) ? = null
+    var onIncViewedCount: ((Int, Float) -> Unit)? = null
     class WIPDiffUtil : androidx.recyclerview.widget.DiffUtil.ItemCallback<WIPModel>() {
         override fun areItemsTheSame(oldItem: WIPModel, newItem: WIPModel): Boolean {
             return oldItem == newItem
@@ -36,10 +37,17 @@ class WIPListAdapter : ListAdapter<WIPModel, RecyclerView.ViewHolder>(WIPDiffUti
                         txtCount.text = wipItem.displayCount.toInt().toString() + " times"
                     }
 
-
                     wipCv.setOnClickListener {
-                        wipItem.id?.let { it1 -> onWipItemClicked?.invoke(it1) }
+                        wipItem.id?.let { it1 -> wipItem.displayCount?.let { it2 ->
+                            onWipItemClicked?.invoke(it1,
+                                it2
+                            )
+                        } }
                     }
+
+//                    val incCount = wipItem.displayCount?.toInt()?.plus(1)
+//                    wipItem.id?.let { incCount?.toFloat()
+//                        ?.let { it1 -> onIncViewedCount?.invoke(it, it1) } }
                 }
             }
     }

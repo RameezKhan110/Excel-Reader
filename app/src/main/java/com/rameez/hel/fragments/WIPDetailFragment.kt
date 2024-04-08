@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.rameez.hel.R
+import com.rameez.hel.SharedPref
 import com.rameez.hel.databinding.FragmentWIPDetailBinding
 import com.rameez.hel.viewmodel.WIPViewModel
 import java.util.Locale
@@ -53,6 +54,12 @@ class WIPDetailFragment : Fragment() {
 
             }
         }
+        val viewCount = intent?.getFloat("view_count", 0f)
+        if (viewCount != null) {
+            if(SharedPref.isAppLaunched(requireContext())) {
+//                updateViewedCount(viewCount)
+            }
+        }
 
         mBinding.imgBack.setOnClickListener {
             updateReadCount()
@@ -89,6 +96,11 @@ class WIPDetailFragment : Fragment() {
         var readCount = mBinding.txtReadCount.text.substring(0, mBinding.txtReadCount.text.length - 5).trim().toInt()
         readCount += 1
         wipViewModel.updateReadCount(id = id, readCount = readCount.toFloat())
+    }
+
+    private fun updateViewedCount(viewCount: Float) {
+        val count = viewCount.toInt() + 1
+        wipViewModel.updateViewedCount(id = id, viewCount = count.toFloat())
     }
     override fun onDestroyView() {
         super.onDestroyView()

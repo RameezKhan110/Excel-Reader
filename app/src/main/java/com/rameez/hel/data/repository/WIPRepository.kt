@@ -14,6 +14,9 @@ class WIPRepository(private val wipDao: WIPDao) {
         return wipDao.getWIPs()
     }
 
+    suspend fun getWIPs2(): List<WIPModel> {
+        return wipDao.getWIPs2()
+    }
     suspend fun dropTable() {
         wipDao.dropTable()
     }
@@ -41,5 +44,9 @@ class WIPRepository(private val wipDao: WIPDao) {
 
     fun getWIPsWithCustomTag(tag: String): LiveData<List<WIPModel>> {
         return wipDao.getWIPsWithCustomTag(tag)
+    }
+
+    suspend fun updateViewedCount(id: Int, viewCount: Float) {
+        wipDao.updateViewedCount(id, viewCount)
     }
 }

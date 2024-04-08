@@ -13,6 +13,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        SharedPref.appLaunched(this, true)
+
 //
 //        val hostFragment =supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
 //        navController = hostFragment.findNavController()
@@ -22,4 +25,13 @@ class MainActivity : AppCompatActivity() {
 //        }
     }
 
+    override fun onStart() {
+        super.onStart()
+
+    }
+//
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        SharedPref.appLaunched(this, false)
+//    }
 }

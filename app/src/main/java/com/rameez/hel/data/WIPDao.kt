@@ -15,6 +15,9 @@ interface WIPDao {
     @Query("SELECT * FROM WIP_LIST")
     fun getWIPs(): LiveData<List<WIPModel>>
 
+    @Query("SELECT * FROM WIP_LIST")
+    suspend fun getWIPs2(): List<WIPModel>
+
     @Query("DELETE FROM WIP_LIST")
     suspend fun dropTable()
 
@@ -38,4 +41,7 @@ interface WIPDao {
 
     @Query("SELECT * FROM WIP_LIST WHERE customTag LIKE '%' || :tag || '%'")
     fun getWIPsWithCustomTag(tag: String): LiveData<List<WIPModel>>
+
+    @Query("UPDATE WIP_LIST SET displayCount = :viewCount WHERE id = :id")
+    suspend fun updateViewedCount(id: Int, viewCount: Float)
 }

@@ -63,7 +63,6 @@ class WIPListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Toast.makeText(requireContext(), "fsdf", Toast.LENGTH_SHORT)
         SharedPref.appLaunched(requireContext(), false)
     }
 

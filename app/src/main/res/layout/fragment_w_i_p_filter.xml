@@ -81,7 +81,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Filter by Counts (Read)"
+                android:text="Filter by Counts (Encountered)"
                 android:textColor="@color/black"
                 android:id="@+id/tv4"
                 app:layout_constraintStart_toStartOf="parent"
@@ -95,7 +95,7 @@
                 android:layout_height="48dp"
                 app:layout_constraintStart_toStartOf="@id/tv4"
                 android:prompt="@string/app_name"
-                android:hint="Enter read count"
+                android:hint="Enter encountered"
                 android:textColorHint="@color/black"
                 android:inputType="number"
                 android:textColor="@color/black"

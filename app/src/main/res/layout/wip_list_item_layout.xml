@@ -12,7 +12,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical">
 
         <View
@@ -74,11 +74,11 @@
             android:id="@+id/txtCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/back_box"
             android:fontFamily="@font/poppins_light"
-            android:text="5 times"
+            android:text="Viewed 5 times"
             android:textColor="@color/black"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -87,32 +87,48 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/txtEncountered"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/back_box"
+            android:fontFamily="@font/poppins_light"
+            android:text="Encountered 5 times"
+            android:textColor="@color/black"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtCount"/>
+
         <LinearLayout
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:orientation="vertical"
+            android:layout_marginTop="4dp"
             android:padding="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtWordType">
+            app:layout_constraintTop_toBottomOf="@+id/txtEncountered">
 
             <TextView
                 android:id="@+id/txtWord"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
                 android:fontFamily="@font/poppins_extrabold"
                 android:text="Scamper"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/txtWordMeaning"
                 android:layout_width="match_parent"
-                android:textColor="@color/black"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:ellipsize="end"
@@ -120,7 +136,8 @@
                 android:fontFamily="@font/poppins_medium"
                 android:maxLines="3"
                 android:padding="5dp"
-                android:text="run with light steps out of fear or excitement run with light steps out of fear or excitement run with light steps out of fear or excitement run with light steps out of fear or excitement" />
+                android:text="run with light steps out of fear or excitement run with light steps out of fear or excitement run with light steps out of fear or excitement run with light steps out of fear or excitement"
+                android:textColor="@color/black" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

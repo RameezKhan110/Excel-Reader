@@ -46,7 +46,7 @@ class WIPEditFragment : Fragment() {
                     tvTags.text = it?.customTag?.joinToString(", ")
                     if (it.readCount != null) etRadCount.setText(it.readCount.toInt().toString())
                     if (it.displayCount != null) etViewedCount.setText(
-                        it.displayCount.toInt().toString()
+                        it.displayCount!!.toInt().toString()
                     )
                     if (it?.customTag?.none() { it.isEmpty() } == true) {
                         tagsList = it.customTag as ArrayList<String>

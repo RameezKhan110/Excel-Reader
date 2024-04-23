@@ -72,7 +72,7 @@ class WIPSearchFragment : Fragment() {
 
             filteredList = (wordFilteredList + meaningFilteredList + sampleSentenceFilteredList) as ArrayList<WIPModel>
 
-            wipSearchAdapter.submitList(filteredList)
+            wipSearchAdapter.submitList(filteredList.distinct())
             wipSearchAdapter.notifyDataSetChanged()
         }
 

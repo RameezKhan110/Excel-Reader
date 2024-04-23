@@ -32,10 +32,17 @@ class WIPListAdapter : ListAdapter<WIPModel, RecyclerView.ViewHolder>(WIPDiffUti
                     txtWord.text = wipItem?.wip
                     txtWordMeaning.text = wipItem?.meaning
                     if(wipItem.displayCount == null) {
-                        txtCount.text = "0 times"
+                        txtCount.text = "Viewed 0 times"
                     } else {
-                        txtCount.text = wipItem.displayCount.toInt().toString() + " times"
+                        txtCount.text = "Viewed " + wipItem.displayCount!!.toInt().toString() + " times"
                     }
+
+                    if(wipItem.readCount == null) {
+                        txtEncountered.text = "Encountered 0 times"
+                    } else {
+                        txtEncountered.text = "Encountered " + wipItem.readCount.toInt().toString() + " times"
+                    }
+
 
                     wipCv.setOnClickListener {
                         wipItem.id?.let { it1 -> wipItem.displayCount?.let { it2 ->

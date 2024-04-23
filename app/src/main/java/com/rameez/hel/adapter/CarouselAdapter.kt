@@ -36,7 +36,7 @@ class CarouselAdapter :
                     txtWord.text = item.wip
                     txtWordMeaning.text = item.meaning
                     txtViewCount.text = "Viewed " + item.displayCount?.toInt().toString() + " times"
-                    txtReadCount.text = "Read " + item.readCount?.toInt().toString() + " times"
+                    txtReadCount.text = "Encountered " + item.readCount?.toInt().toString() + " times"
                     txtSampleSentence.text = item.sampleSentence
                     txtTags.text = item.customTag?.joinToString(", ")
 

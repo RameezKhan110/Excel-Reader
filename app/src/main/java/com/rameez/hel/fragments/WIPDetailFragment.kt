@@ -50,7 +50,7 @@ class WIPDetailFragment : Fragment() {
                 tvTags.text = it?.customTag?.joinToString(", ")
                 it?.customTag
                 if (it.readCount != null) txtReadCount.text = it.readCount.toInt().toString() + " times" else txtReadCount.text = "0 times"
-                if (it.displayCount != null) txtViewCount.text = it.displayCount.toInt().toString() + " times" else txtViewCount.text = "0 times"
+                if (it.displayCount != null) txtViewCount.text = it.displayCount!!.toInt().toString() + " times" else txtViewCount.text = "0 times"
 
             }
         }
@@ -62,7 +62,7 @@ class WIPDetailFragment : Fragment() {
         }
 
         mBinding.imgBack.setOnClickListener {
-            updateReadCount()
+//            updateReadCount()
             findNavController().navigateUp()
         }
 
@@ -83,13 +83,13 @@ class WIPDetailFragment : Fragment() {
             textToSpeech.speak(word, TextToSpeech.QUEUE_FLUSH, null)
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                updateReadCount()
-                findNavController().navigateUp()
-            }
-
-        })
+//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true) {
+//            override fun handleOnBackPressed() {
+//                updateReadCount()
+//                findNavController().navigateUp()
+//            }
+//
+//        })
     }
 
     private fun updateReadCount() {

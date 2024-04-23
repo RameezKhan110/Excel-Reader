@@ -55,6 +55,7 @@ class WIPListFragment : Fragment() {
     private val OPEN_FILE_REQUEST_CODE = 200
     private lateinit var permissionUtils: PermissionUtils
     private val wipList = arrayListOf<WIPModel>()
+    private var isFirstTime = false
 
     override fun onStart() {
         super.onStart()
@@ -71,7 +72,10 @@ class WIPListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mBinding = FragmentWIPListBinding.inflate(layoutInflater, container, false)
+        if (::mBinding.isInitialized.not()) {
+            isFirstTime = true
+            mBinding = FragmentWIPListBinding.inflate(layoutInflater, container, false)
+        }
         askForPermission()
 
         return mBinding.root
@@ -84,31 +88,26 @@ class WIPListFragment : Fragment() {
         setUpRecyclerView()
 
         wipViewModel.getWIPs()?.observe(viewLifecycleOwner) {
-//            val shuffledList = it.shuffled()
-            wipListAdapter.submitList(it)
-
-        }
-
-        if (SharedPref.isAppLaunched(requireContext())) {
-            lifecycleScope.launch {
-                wipViewModel.getWIPs2()?.forEach {
-                    val incCount = it.displayCount?.toInt()?.plus(1)?.toFloat()
-                    it.id?.let { it1 ->
-                        if (incCount != null) {
-                            wipViewModel.updateViewedCount(it1, incCount)
-                        }
-                    }
-                }
-                SharedPref.appLaunched(requireContext(), false)
+            if (isFirstTime) {
+                val shuffledList = it.shuffled()
+                wipListAdapter.submitList(shuffledList)
+                isFirstTime = false
             }
         }
 
-
-
-
-
-
-
+//        if (SharedPref.isAppLaunched(requireContext())) {
+//            lifecycleScope.launch {
+//                wipViewModel.getWIPs2()?.forEach {
+//                    val incCount = it.displayCount?.toInt()?.plus(1)?.toFloat()
+//                    it.id?.let { it1 ->
+//                        if (incCount != null) {
+//                            wipViewModel.updateViewedCount(it1, incCount)
+//                        }
+//                    }
+//                }
+//                SharedPref.appLaunched(requireContext(), false)
+//            }
+//        }
 
 
         mBinding.apply {

@@ -15,7 +15,7 @@ data class WIPModel constructor(
     val sampleSentence: String? = null,
     val customTag: List<String>? = null,
     val readCount: Float? = null,
-    val displayCount: Float? = null
+    var displayCount: Float? = null
 ) {
     data class Builder(
         var id: Int? = null,

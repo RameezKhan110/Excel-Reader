@@ -63,4 +63,7 @@ class CarouselAdapter :
         )
     }
 
+    fun getWIPItem(position: Int): WIPModel {
+        return currentList[position]
+    }
 }

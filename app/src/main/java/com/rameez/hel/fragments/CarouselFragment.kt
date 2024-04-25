@@ -16,6 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.rameez.hel.R
 import com.rameez.hel.adapter.CarouselAdapter
@@ -34,7 +35,9 @@ class CarouselFragment : Fragment() {
     private val wipViewModel: WIPViewModel by activityViewModels()
     private var currentPosition: Int = 0
     private var previousPosition = -1
+    private var isAdded = false
     private val handler = Handler(Looper.getMainLooper())
+    private val leftSwipedItemList = arrayListOf<WIPModel>()
     private var shuffledList = listOf<WIPModel>()
     private val runnable = object : Runnable {
         override fun run() {
@@ -106,6 +109,8 @@ class CarouselFragment : Fragment() {
             }
             rvList.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            val snapHelper = PagerSnapHelper()
+            snapHelper.attachToRecyclerView(rvList)
             rvList.adapter = carouselAdapter
         }
 
@@ -152,23 +157,52 @@ class CarouselFragment : Fragment() {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
                     val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-                    Log.d("TAG", "First visible item position: $firstVisibleItemPosition")
-                    Log.d("TAG", "Last visible item position: $lastVisibleItemPosition")
+//                    Log.d("TAG", "First visible item position: $firstVisibleItemPosition")
+//                    Log.d("TAG", "Last visible item position: $lastVisibleItemPosition")
                     currentPosition = firstVisibleItemPosition
                     if(firstVisibleItemPosition != RecyclerView.NO_POSITION) {
                         val id = shuffledList[firstVisibleItemPosition].id
                         val viewCount = shuffledList[firstVisibleItemPosition].displayCount
                         if (id != null && viewCount != null && firstVisibleItemPosition != previousPosition) {
                             previousPosition = firstVisibleItemPosition
-                            updateViewedCount(id, viewCount)
-                            shuffledList[firstVisibleItemPosition].displayCount =
-                                shuffledList[firstVisibleItemPosition].displayCount?.toInt()?.plus(1)
-                                    ?.toFloat()
-                            carouselAdapter.submitList(shuffledList)
-                            carouselAdapter.notifyDataSetChanged()
+                            if(isAdded) {
+                                updateViewedCount(id, viewCount)
+                                shuffledList[firstVisibleItemPosition].displayCount = shuffledList[firstVisibleItemPosition].displayCount?.toInt()?.plus(1)?.toFloat()
+                                carouselAdapter.submitList(shuffledList)
+                                carouselAdapter.notifyDataSetChanged()
+                                isAdded = false
+                            }
                         }
                     }
 
+                }
+            }
+
+            var isScrolling = false
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!isScrolling) {
+                    isScrolling = true
+
+                    if (dx < 0) {
+
+                    } else if (dx > 0) {
+                        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                        Log.d("TAG", "First visible item position: $firstVisibleItemPosition")
+                        Log.d("TAG", "Last visible item position: $lastVisibleItemPosition")
+                        val item = carouselAdapter.getWIPItem(lastVisibleItemPosition)
+                        if(item !in leftSwipedItemList) {
+                            isAdded = true
+                            leftSwipedItemList.add(item)
+                        }
+                    }
+
+                    // Reset the flag after the scroll event is handled
+                    recyclerView.postDelayed({
+                        isScrolling = false
+                    }, 500) // Adjust this delay as needed
                 }
             }
         })
@@ -214,5 +248,10 @@ class CarouselFragment : Fragment() {
     private fun updateViewedCount(id: Int, viewCount: Float) {
         val count = viewCount + 1
         wipViewModel.updateViewedCount(id, count)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        leftSwipedItemList.clear()
     }
 }

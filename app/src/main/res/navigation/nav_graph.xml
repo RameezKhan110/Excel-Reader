@@ -35,4 +35,9 @@
         android:name="com.rameez.hel.fragments.CarouselFragment"
         android:label="fragment_carousel"
         tools:layout="@layout/fragment_carousel" />
+    <fragment
+        android:id="@+id/deleteTagsFragment"
+        android:name="com.rameez.hel.fragments.DeleteTagsFragment"
+        android:label="fragment_delete_tags"
+        tools:layout="@layout/fragment_delete_tags" />
 </navigation>

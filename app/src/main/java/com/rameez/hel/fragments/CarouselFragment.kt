@@ -34,11 +34,11 @@ class CarouselFragment : Fragment() {
     private val sharedViewModel: ShardViewModel by activityViewModels()
     private val wipViewModel: WIPViewModel by activityViewModels()
     private var currentPosition: Int = 0
-    private var previousPosition = -1
+    private var previousPosition = 0
     private var isAdded = false
     private val handler = Handler(Looper.getMainLooper())
-    private val leftSwipedItemList = arrayListOf<WIPModel>()
     private var shuffledList = listOf<WIPModel>()
+    private var isFirstTime = false
     private val runnable = object : Runnable {
         override fun run() {
             if (carouselAdapter.currentList.size - 1 == currentPosition) {
@@ -64,8 +64,10 @@ class CarouselFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mBinding = FragmentCarouselBinding.inflate(layoutInflater, container, false)
-
+        if (::mBinding.isInitialized.not()) {
+            isFirstTime = true
+            mBinding = FragmentCarouselBinding.inflate(layoutInflater, container, false)
+        }
         return mBinding.root
     }
 
@@ -89,6 +91,7 @@ class CarouselFragment : Fragment() {
                     sharedViewModel.selectedMins = null
                     sharedViewModel.selectedHours = null
                     sharedViewModel.isTimerRunning = false
+                    sharedViewModel.leftSwipedItemList.clear()
                     findNavController().navigateUp()
                 }
 
@@ -105,12 +108,16 @@ class CarouselFragment : Fragment() {
                 sharedViewModel.isTimerRunning = false
                 sharedViewModel.selectedMins = null
                 sharedViewModel.selectedHours = null
+                sharedViewModel.leftSwipedItemList.clear()
                 findNavController().navigateUp()
             }
             rvList.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            val snapHelper = PagerSnapHelper()
-            snapHelper.attachToRecyclerView(rvList)
+            if (isFirstTime) {
+                val snapHelper = PagerSnapHelper()
+                snapHelper.attachToRecyclerView(rvList)
+            }
+
             rvList.adapter = carouselAdapter
         }
 
@@ -119,27 +126,31 @@ class CarouselFragment : Fragment() {
             it.id?.let { it1 -> idsList.add(it1) }
         }
 
-        lifecycleScope.launch {
-            val newList: ArrayList<WIPModel>
-            val list = wipViewModel.getWIPs2()
-            newList = (list?.filter {
-                it.id in idsList
-            } ?: emptyList()) as ArrayList<WIPModel>
-            shuffledList = newList.shuffled()
-            Log.d("TAG", "shuffled $shuffledList")
-            carouselAdapter.submitList(shuffledList)
-
-            val id = shuffledList[0].id
-            val viewCount = shuffledList[0].displayCount
-            if (id != null && viewCount != null) {
-                updateViewedCount(id, viewCount)
-                shuffledList[0].displayCount =
-                    shuffledList[0].displayCount?.toInt()?.plus(1)
-                        ?.toFloat()
+        if (isFirstTime) {
+            lifecycleScope.launch {
+                val newList: ArrayList<WIPModel>
+                val list = wipViewModel.getWIPs2()
+                newList = (list?.filter {
+                    it.id in idsList
+                } ?: emptyList()) as ArrayList<WIPModel>
+                shuffledList = newList.shuffled()
+                Log.d("TAG", "shuffled $shuffledList")
                 carouselAdapter.submitList(shuffledList)
-                carouselAdapter.notifyDataSetChanged()
+
+                val id = shuffledList[0].id
+                val viewCount = shuffledList[0].displayCount
+                if (id != null && viewCount != null) {
+                    updateViewedCount(id, viewCount)
+                    shuffledList[0].displayCount =
+                        shuffledList[0].displayCount?.toInt()?.plus(1)
+                            ?.toFloat()
+                    carouselAdapter.submitList(shuffledList)
+                    carouselAdapter.notifyDataSetChanged()
+                }
+
             }
 
+            isFirstTime = false
         }
 
         carouselAdapter.onItemClick = { id ->
@@ -160,21 +171,22 @@ class CarouselFragment : Fragment() {
 //                    Log.d("TAG", "First visible item position: $firstVisibleItemPosition")
 //                    Log.d("TAG", "Last visible item position: $lastVisibleItemPosition")
                     currentPosition = firstVisibleItemPosition
-                    if(firstVisibleItemPosition != RecyclerView.NO_POSITION) {
+                    if (firstVisibleItemPosition != RecyclerView.NO_POSITION) {
                         val id = shuffledList[firstVisibleItemPosition].id
                         val viewCount = shuffledList[firstVisibleItemPosition].displayCount
                         if (id != null && viewCount != null && firstVisibleItemPosition != previousPosition) {
                             previousPosition = firstVisibleItemPosition
-                            if(isAdded) {
+                            if (isAdded) {
                                 updateViewedCount(id, viewCount)
-                                shuffledList[firstVisibleItemPosition].displayCount = shuffledList[firstVisibleItemPosition].displayCount?.toInt()?.plus(1)?.toFloat()
+                                shuffledList[firstVisibleItemPosition].displayCount =
+                                    shuffledList[firstVisibleItemPosition].displayCount?.toInt()
+                                        ?.plus(1)?.toFloat()
                                 carouselAdapter.submitList(shuffledList)
                                 carouselAdapter.notifyDataSetChanged()
                                 isAdded = false
                             }
                         }
                     }
-
                 }
             }
 
@@ -193,9 +205,9 @@ class CarouselFragment : Fragment() {
                         Log.d("TAG", "First visible item position: $firstVisibleItemPosition")
                         Log.d("TAG", "Last visible item position: $lastVisibleItemPosition")
                         val item = carouselAdapter.getWIPItem(lastVisibleItemPosition)
-                        if(item !in leftSwipedItemList) {
+                        if (item !in sharedViewModel.leftSwipedItemList) {
                             isAdded = true
-                            leftSwipedItemList.add(item)
+                            sharedViewModel.leftSwipedItemList.add(item)
                         }
                     }
 
@@ -228,7 +240,7 @@ class CarouselFragment : Fragment() {
                 }
 
                 override fun onFinish() {
-                    if (isAdded && activity != null) {
+//                    if (isAdded && activity != null) {
                         mBinding.tvTimer.text = "00:00:00"
                         Toast.makeText(requireContext(), "Timer Finished", Toast.LENGTH_SHORT)
                             .show()
@@ -236,7 +248,7 @@ class CarouselFragment : Fragment() {
                         sharedViewModel.selectedMins = null
                         sharedViewModel.isTimerRunning = false
                         findNavController().navigateUp()
-                    }
+//                    }
                 }
             }.start()
             sharedViewModel.isTimerRunning = true
@@ -252,6 +264,6 @@ class CarouselFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        leftSwipedItemList.clear()
+//        leftSwipedItemList.clear()
     }
 }

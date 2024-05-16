@@ -10,8 +10,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.rameez.hel.R
 import com.rameez.hel.data.model.WIPModel
 import com.rameez.hel.databinding.FragmentWIPEditBinding
+import com.rameez.hel.viewmodel.ShardViewModel
 import com.rameez.hel.viewmodel.WIPViewModel
 
 class WIPEditFragment : Fragment() {
@@ -19,6 +21,8 @@ class WIPEditFragment : Fragment() {
     private lateinit var mBinding: FragmentWIPEditBinding
     private val wipViewModel: WIPViewModel by activityViewModels()
     private var tagsList = arrayListOf<String>()
+    private val sharedViewModel: ShardViewModel by activityViewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,10 +56,16 @@ class WIPEditFragment : Fragment() {
                         tagsList = it.customTag as ArrayList<String>
                     }
                 }
+                if(sharedViewModel.notDeletedTags != null) {
+                    mBinding.tvTags.text = sharedViewModel.notDeletedTags?.joinToString(", ")
+                    sharedViewModel.notDeletedTags = null
+                }
             }
         } else {
             mBinding.tvHeading.text = "Add WIP"
         }
+
+
 
         mBinding.apply {
             imgBack.setOnClickListener {
@@ -117,6 +127,15 @@ class WIPEditFragment : Fragment() {
                 Log.d("TAG", "tag list $tagsList")
                 tvTags.text = tagsList.joinToString(", ")
                 etTag.setText("")
+            }
+
+            ivDeleteTags.setOnClickListener {
+                if(id != null) {
+                    val bundle = Bundle()
+                    bundle.putInt("wip_id", id)
+                    findNavController().navigate(R.id.deleteTagsFragment, bundle)
+                }
+
             }
 
         }

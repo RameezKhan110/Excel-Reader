@@ -15,5 +15,8 @@ class ShardViewModel : ViewModel() {
     var isTimerRunning: Boolean = false
     var readOperator: String? = null
     var viewedOperator: String? = null
+    val leftSwipedItemList = arrayListOf<WIPModel>()
+    var notDeletedTags: ArrayList<String>? = null
+
 
 }

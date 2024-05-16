@@ -89,11 +89,21 @@ class WIPListFragment : Fragment() {
 
         wipViewModel.getWIPs()?.observe(viewLifecycleOwner) {
             if (isFirstTime) {
+                mBinding.rvList.visibility = View.GONE
+                mBinding.progressbar.visibility = View.VISIBLE
                 val shuffledList = it.shuffled()
                 wipListAdapter.submitList(shuffledList)
                 isFirstTime = false
+                lifecycleScope.launch {
+                    delay(500)
+                    mBinding.rvList.scrollToPosition(0)
+                    mBinding.rvList.visibility = View.VISIBLE
+                    mBinding.progressbar.visibility = View.GONE
+                }
             }
         }
+
+
 
 //        if (SharedPref.isAppLaunched(requireContext())) {
 //            lifecycleScope.launch {
@@ -291,6 +301,7 @@ class WIPListFragment : Fragment() {
     }
 
     private fun readExcelFile(uri: Uri) {
+
         val contentResolver: ContentResolver = requireContext().contentResolver
         contentResolver.openInputStream(uri)?.use { inputStream ->
             val workbook = WorkbookFactory.create(inputStream)
@@ -330,6 +341,7 @@ class WIPListFragment : Fragment() {
             }
 
         }
+        isFirstTime = true
     }
 
     private fun getFilledRowCount(sheet: Sheet): Int {

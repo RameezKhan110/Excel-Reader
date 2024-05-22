@@ -92,6 +92,8 @@ class CarouselFragment : Fragment() {
                     sharedViewModel.selectedHours = null
                     sharedViewModel.isTimerRunning = false
                     sharedViewModel.leftSwipedItemList.clear()
+                    sharedViewModel.itemPos = null
+                    sharedViewModel.itemId = null
                     findNavController().navigateUp()
                 }
 
@@ -109,6 +111,8 @@ class CarouselFragment : Fragment() {
                 sharedViewModel.selectedMins = null
                 sharedViewModel.selectedHours = null
                 sharedViewModel.leftSwipedItemList.clear()
+                sharedViewModel.itemPos = null
+                sharedViewModel.itemId = null
                 findNavController().navigateUp()
             }
             rvList.layoutManager =
@@ -148,12 +152,44 @@ class CarouselFragment : Fragment() {
                     carouselAdapter.notifyDataSetChanged()
                 }
 
+//                if(sharedViewModel.itemPos != null) {
+//                    var position = 0
+//                    carouselAdapter.currentList.forEachIndexed{ index, item ->
+//                        if(sharedViewModel.itemPos == item.id) {
+//                            position = index
+//                        }
+//                    }
+//                    mBinding.rvList.scrollToPosition(position)
+//                    sharedViewModel.itemPos = null
+//                }
             }
 
             isFirstTime = false
         }
 
-        carouselAdapter.onItemClick = { id ->
+        if(sharedViewModel.itemId != null)  {
+            wipViewModel.getWIPById(sharedViewModel.itemId ?: 0)?.observe(viewLifecycleOwner) {
+                if(sharedViewModel.itemPos != null) {
+                    shuffledList[sharedViewModel.itemPos ?: 0].apply {
+                        sr = it.sr
+                        category = it.category
+                        wip = it.wip
+                        meaning = it.meaning
+                        sampleSentence = it.sampleSentence
+                        customTag = it.customTag
+                        readCount = it.readCount
+                        displayCount = it.displayCount
+                    }
+                    carouselAdapter.notifyItemChanged(sharedViewModel.itemPos ?: 0)
+                }
+
+            }
+        }
+
+
+        carouselAdapter.onItemClick = { id, pos ->
+            sharedViewModel.itemPos = pos
+            sharedViewModel.itemId = id
             val bundle = Bundle()
             bundle.putInt("wip_id", id)
             findNavController().navigate(R.id.WIPDetailFragment, bundle)

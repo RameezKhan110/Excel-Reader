@@ -31,6 +31,7 @@ import com.rameez.hel.adapter.WIPListAdapter
 import com.rameez.hel.data.model.WIPModel
 import com.rameez.hel.databinding.FragmentWIPListBinding
 import com.rameez.hel.utils.PermissionUtils
+import com.rameez.hel.viewmodel.ShardViewModel
 import com.rameez.hel.viewmodel.WIPViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +57,8 @@ class WIPListFragment : Fragment() {
     private lateinit var permissionUtils: PermissionUtils
     private val wipList = arrayListOf<WIPModel>()
     private var isFirstTime = false
-
+    private val sharedViewModel: ShardViewModel by activityViewModels()
+    private var shuffledList = arrayListOf<WIPModel>()
     override fun onStart() {
         super.onStart()
 
@@ -91,7 +93,7 @@ class WIPListFragment : Fragment() {
             if (isFirstTime) {
                 mBinding.rvList.visibility = View.GONE
                 mBinding.progressbar.visibility = View.VISIBLE
-                val shuffledList = it.shuffled()
+                shuffledList = it.shuffled() as ArrayList<WIPModel>
                 wipListAdapter.submitList(shuffledList)
                 isFirstTime = false
                 lifecycleScope.launch {
@@ -103,6 +105,24 @@ class WIPListFragment : Fragment() {
             }
         }
 
+        if(sharedViewModel.itemIdFromHome != null)  {
+            wipViewModel.getWIPById(sharedViewModel.itemIdFromHome ?: 0)?.observe(viewLifecycleOwner) {
+                if(sharedViewModel.itemPosFromHome != null) {
+                    shuffledList[sharedViewModel.itemPosFromHome ?: 0].apply {
+                        sr = it.sr
+                        category = it.category
+                        wip = it.wip
+                        meaning = it.meaning
+                        sampleSentence = it.sampleSentence
+                        customTag = it.customTag
+                        readCount = it.readCount
+                        displayCount = it.displayCount
+                    }
+                    wipListAdapter.notifyItemChanged(sharedViewModel.itemPosFromHome ?: 0)
+                }
+
+            }
+        }
 
 
 //        if (SharedPref.isAppLaunched(requireContext())) {
@@ -131,14 +151,20 @@ class WIPListFragment : Fragment() {
             }
 
             llSearch.setOnClickListener {
+                sharedViewModel.itemIdFromHome = null
+                sharedViewModel.itemPosFromHome = null
                 findNavController().navigate(R.id.WIPSearchFragment)
             }
 
             imgFilter.setOnClickListener {
+                sharedViewModel.itemIdFromHome = null
+                sharedViewModel.itemPosFromHome = null
                 findNavController().navigate(R.id.WIPFilterFragment)
             }
         }
-        wipListAdapter.onWipItemClicked = { id, viewCount ->
+        wipListAdapter.onWipItemClicked = { id, viewCount, pos ->
+            sharedViewModel.itemIdFromHome = id
+            sharedViewModel.itemPosFromHome = pos
             val bundle = Bundle()
             bundle.putInt("wip_id", id)
             bundle.putFloat("view_count", viewCount)

@@ -48,7 +48,7 @@ class WIPEditFragment : Fragment() {
                     etSampleSentence.setText(it.sampleSentence)
                     etCategory.setText((it.category))
                     tvTags.text = it?.customTag?.joinToString(", ")
-                    if (it.readCount != null) etRadCount.setText(it.readCount.toInt().toString())
+                    if (it.readCount != null) etRadCount.setText(it.readCount!!.toInt().toString())
                     if (it.displayCount != null) etViewedCount.setText(
                         it.displayCount!!.toInt().toString()
                     )
@@ -59,6 +59,11 @@ class WIPEditFragment : Fragment() {
                 if(sharedViewModel.notDeletedTags != null) {
                     mBinding.tvTags.text = sharedViewModel.notDeletedTags?.joinToString(", ")
                     sharedViewModel.notDeletedTags = null
+                }
+                if(mBinding.tvTags.text.isNotBlank()) {
+                    mBinding.ivDeleteTags.visibility = View.VISIBLE
+                } else {
+                    mBinding.ivDeleteTags.visibility = View.GONE
                 }
             }
         } else {

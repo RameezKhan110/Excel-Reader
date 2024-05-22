@@ -49,7 +49,7 @@ class WIPDetailFragment : Fragment() {
                 txtSampleSentence.text = it?.sampleSentence
                 tvTags.text = it?.customTag?.joinToString(", ")
                 it?.customTag
-                if (it.readCount != null) txtReadCount.text = it.readCount.toInt().toString() + " times" else txtReadCount.text = "0 times"
+                if (it.readCount != null) txtReadCount.text = it.readCount!!.toInt().toString() + " times" else txtReadCount.text = "0 times"
                 if (it.displayCount != null) txtViewCount.text = it.displayCount!!.toInt().toString() + " times" else txtViewCount.text = "0 times"
 
             }

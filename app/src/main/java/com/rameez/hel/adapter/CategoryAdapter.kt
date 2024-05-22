@@ -34,6 +34,9 @@ class CategoryAdapter : ListAdapter<String, RecyclerView.ViewHolder>(WIPDiffUtil
                 checkbox.setOnCheckedChangeListener { compoundButton, isChecked ->
                     onCheckBoxClicked?.invoke(checkbox.text.toString(), isChecked, position)
                 }
+                checkbox.isChecked = true
+
+//                onCheckBoxClicked?.invoke(checkbox.text.toString(), true, position)
             }
         }
     }

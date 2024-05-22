@@ -45,6 +45,7 @@ class WIPFilterFragment : Fragment() {
     private val categoriesList = arrayListOf<String>()
     private var readOperator: String? = null
     private var viewedOperator: String? = null
+    private var isFirstTime = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +58,10 @@ class WIPFilterFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mBinding = FragmentWIPFilterBinding.inflate(layoutInflater, container, false)
-
+        if (::mBinding.isInitialized.not()) {
+            isFirstTime = true
+            mBinding = FragmentWIPFilterBinding.inflate(layoutInflater, container, false)
+        }
         mBinding.apply {
         }
 

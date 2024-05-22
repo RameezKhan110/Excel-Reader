@@ -8,13 +8,13 @@ data class WIPModel constructor(
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
 
-    val sr: Float? = null,
-    val category: String? = null,
-    val wip: String? = null,
-    val meaning: String? = null,
-    val sampleSentence: String? = null,
-    val customTag: List<String>? = null,
-    val readCount: Float? = null,
+    var sr: Float? = null,
+    var category: String? = null,
+    var wip: String? = null,
+    var meaning: String? = null,
+    var sampleSentence: String? = null,
+    var customTag: List<String>? = null,
+    var readCount: Float? = null,
     var displayCount: Float? = null
 ) {
     data class Builder(

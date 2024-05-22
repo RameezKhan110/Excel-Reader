@@ -17,6 +17,10 @@ class ShardViewModel : ViewModel() {
     var viewedOperator: String? = null
     val leftSwipedItemList = arrayListOf<WIPModel>()
     var notDeletedTags: ArrayList<String>? = null
+    var itemPos: Int? = null
+    var itemId: Int? = null
+    var itemPosFromHome: Int? = null
+    var itemIdFromHome: Int? = null
 
 
 }

@@ -12,7 +12,7 @@ import com.rameez.hel.databinding.CarouselItemBinding
 class CarouselAdapter :
     ListAdapter<WIPModel, RecyclerView.ViewHolder>(CarouselDiffUtil()) {
 
-    var onItemClick: ((Int) -> Unit)? = null
+    var onItemClick: ((Int, Int) -> Unit)? = null
     class CarouselDiffUtil : androidx.recyclerview.widget.DiffUtil.ItemCallback<WIPModel>() {
         override fun areItemsTheSame(oldItem: WIPModel, newItem: WIPModel): Boolean {
             return oldItem == newItem
@@ -41,7 +41,7 @@ class CarouselAdapter :
                     txtTags.text = item.customTag?.joinToString(", ")
 
                     wipCv.setOnClickListener {
-                        item.id?.let { it1 -> onItemClick?.invoke(it1) }
+                        item.id?.let { it1 -> onItemClick?.invoke(it1, position) }
                     }
                 }
             }

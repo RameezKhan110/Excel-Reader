@@ -72,4 +72,12 @@ class WIPViewModel : ViewModel() {
         wipRepository?.updateViewedCount(id, viewCount)
     }
 
+    fun deleteWIPById(id: Int) = viewModelScope.launch {
+        wipRepository?.deleteWIPById(id)
+    }
+
+    fun deleteWholeCategory(categories: List<String?>) = viewModelScope.launch {
+        wipRepository?.deleteWholeCategory(categories)
+    }
+
 }

@@ -8,10 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.rameez.hel.R
 import com.rameez.hel.adapter.DeleteTagsAdapter
 import com.rameez.hel.databinding.FragmentDeleteTagsBinding
-import com.rameez.hel.viewmodel.ShardViewModel
+import com.rameez.hel.viewmodel.SharedViewModel
 import com.rameez.hel.viewmodel.WIPViewModel
 
 class DeleteTagsFragment : Fragment() {
@@ -19,7 +18,7 @@ class DeleteTagsFragment : Fragment() {
     private lateinit var mBinding: FragmentDeleteTagsBinding
     private val wipViewModel: WIPViewModel by activityViewModels()
     private val deleteTagsAdapter = DeleteTagsAdapter()
-    private val sharedViewModel: ShardViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private var notDeletedTagsList = arrayListOf<String>()
 
     override fun onCreateView(

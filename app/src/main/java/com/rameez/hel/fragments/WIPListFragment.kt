@@ -31,7 +31,7 @@ import com.rameez.hel.adapter.WIPListAdapter
 import com.rameez.hel.data.model.WIPModel
 import com.rameez.hel.databinding.FragmentWIPListBinding
 import com.rameez.hel.utils.PermissionUtils
-import com.rameez.hel.viewmodel.ShardViewModel
+import com.rameez.hel.viewmodel.SharedViewModel
 import com.rameez.hel.viewmodel.WIPViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +57,7 @@ class WIPListFragment : Fragment() {
     private lateinit var permissionUtils: PermissionUtils
     private val wipList = arrayListOf<WIPModel>()
     private var isFirstTime = false
-    private val sharedViewModel: ShardViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private var shuffledList = arrayListOf<WIPModel>()
     override fun onStart() {
         super.onStart()
@@ -106,22 +106,28 @@ class WIPListFragment : Fragment() {
         }
 
         if(sharedViewModel.itemIdFromHome != null)  {
-            wipViewModel.getWIPById(sharedViewModel.itemIdFromHome ?: 0)?.observe(viewLifecycleOwner) {
-                if(sharedViewModel.itemPosFromHome != null) {
-                    shuffledList[sharedViewModel.itemPosFromHome ?: 0].apply {
-                        sr = it.sr
-                        category = it.category
-                        wip = it.wip
-                        meaning = it.meaning
-                        sampleSentence = it.sampleSentence
-                        customTag = it.customTag
-                        readCount = it.readCount
-                        displayCount = it.displayCount
+            if(sharedViewModel.isWIPDeleted.not()) {
+                wipViewModel.getWIPById(sharedViewModel.itemIdFromHome ?: 0)?.observe(viewLifecycleOwner) {
+                    if(sharedViewModel.itemPosFromHome != null) {
+                        shuffledList[sharedViewModel.itemPosFromHome ?: 0].apply {
+                            sr = it.sr
+                            category = it.category
+                            wip = it.wip
+                            meaning = it.meaning
+                            sampleSentence = it.sampleSentence
+                            customTag = it.customTag
+                            readCount = it.readCount
+                            displayCount = it.displayCount
+                        }
+                        wipListAdapter.notifyItemChanged(sharedViewModel.itemPosFromHome ?: 0)
                     }
-                    wipListAdapter.notifyItemChanged(sharedViewModel.itemPosFromHome ?: 0)
-                }
 
+                }
+            } else {
+                isFirstTime = true
+                sharedViewModel.isWIPDeleted = false
             }
+
         }
 
 
@@ -225,9 +231,10 @@ class WIPListFragment : Fragment() {
         val dialogView =
             LayoutInflater.from(requireContext()).inflate(R.layout.custom_dialog_layout, null)
 
-        val importWIP = dialogView.findViewById<TextView>(R.id.importWIP)
-        val exportWIP = dialogView.findViewById<TextView>(R.id.exportWIP)
-        val addWIP = dialogView.findViewById<TextView>(R.id.addWip)
+        val importWIP = dialogView.findViewById<TextView>(R.id.dWord)
+        val exportWIP = dialogView.findViewById<TextView>(R.id.dPhrase)
+        val addWIP = dialogView.findViewById<TextView>(R.id.dIdiom)
+        val deleteWIP = dialogView.findViewById<TextView>(R.id.dAllWips)
 
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
             .setView(dialogView)
@@ -251,6 +258,10 @@ class WIPListFragment : Fragment() {
             findNavController().navigate(R.id.WIPEditFragment)
         }
 
+        deleteWIP.setOnClickListener {
+            alertDialog.dismiss()
+            showDeleteWIPDialog().show()
+        }
         return alertDialog
     }
 
@@ -349,7 +360,7 @@ class WIPListFragment : Fragment() {
                     Log.d("TAG", "cell Values $cellValue")
                     when (j) {
                         0 -> wipModelBuilder.sr((cellValue.toString()).toFloat())
-                        1 -> wipModelBuilder.category(cellValue?.toString())
+                        1 -> wipModelBuilder.category(cellValue?.toString()?.lowercase())
                         2 -> wipModelBuilder.wip(cellValue?.toString())
                         3 -> wipModelBuilder.meaning(cellValue?.toString())
                         4 -> wipModelBuilder.sampleSentence(cellValue?.toString())
@@ -488,6 +499,52 @@ class WIPListFragment : Fragment() {
                 ).show()
             }
         }
+    }
+
+    private fun showDeleteWIPDialog(): AlertDialog {
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.custom_delete_wip_dialog_kayout, null)
+
+        val dWord = dialogView.findViewById<TextView>(R.id.dWord)
+        val dPhrase = dialogView.findViewById<TextView>(R.id.dPhrase)
+        val dIdiom = dialogView.findViewById<TextView>(R.id.dIdiom)
+        val dAllWips = dialogView.findViewById<TextView>(R.id.dAllWips)
+
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+
+        val alertDialog = alertDialogBuilder.create()
+
+
+        dWord.setOnClickListener {
+            alertDialog.dismiss()
+            val categories = shuffledList.filter { it.category == "word" }.map { it.category }
+            wipViewModel.deleteWholeCategory(categories)
+            isFirstTime = true
+        }
+
+        dPhrase.setOnClickListener {
+            alertDialog.dismiss()
+            val categories = shuffledList.filter { it.category == "phrase" }.map { it.category }
+            wipViewModel.deleteWholeCategory(categories)
+            isFirstTime = true
+        }
+
+        dIdiom.setOnClickListener {
+            alertDialog.dismiss()
+            val categories = shuffledList.filter { it.category == "idiom" }.map { it.category }
+            wipViewModel.deleteWholeCategory(categories)
+            isFirstTime = true
+        }
+
+        dAllWips.setOnClickListener {
+            alertDialog.dismiss()
+            wipViewModel.dropTable()
+            isFirstTime = true
+        }
+
+
+        return alertDialog
     }
 
 }

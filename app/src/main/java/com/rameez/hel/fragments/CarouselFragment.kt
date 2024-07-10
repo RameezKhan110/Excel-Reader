@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,16 +23,17 @@ import com.rameez.hel.R
 import com.rameez.hel.adapter.CarouselAdapter
 import com.rameez.hel.data.model.WIPModel
 import com.rameez.hel.databinding.FragmentCarouselBinding
-import com.rameez.hel.viewmodel.ShardViewModel
+import com.rameez.hel.viewmodel.SharedViewModel
 import com.rameez.hel.viewmodel.WIPViewModel
 import kotlinx.coroutines.launch
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class CarouselFragment : Fragment() {
 
     private lateinit var mBinding: FragmentCarouselBinding
     private val carouselAdapter = CarouselAdapter()
-    private val sharedViewModel: ShardViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val wipViewModel: WIPViewModel by activityViewModels()
     private var currentPosition: Int = 0
     private var previousPosition = 0
@@ -39,6 +41,10 @@ class CarouselFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
     private var shuffledList = listOf<WIPModel>()
     private var isFirstTime = false
+    private val snapHelper = PagerSnapHelper()
+    private lateinit var textToSpeech: TextToSpeech
+
+
     private val runnable = object : Runnable {
         override fun run() {
             if (carouselAdapter.currentList.size - 1 == currentPosition) {
@@ -75,6 +81,15 @@ class CarouselFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        textToSpeech = TextToSpeech(requireContext()) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                Log.d("TAG", "Initialization Success")
+            } else {
+                Log.d("TAG", "Initialization Failed")
+            }
+        }
+        textToSpeech.language = Locale.US
+
 //        SharedPref.isFilterScreenCancelled(requireContext(), false)
         sharedViewModel.categoryList.clear()
         sharedViewModel.tagsList.clear()
@@ -82,6 +97,10 @@ class CarouselFragment : Fragment() {
         sharedViewModel.viewedCount = null
         sharedViewModel.readCount = null
         sharedViewModel.viewedOperator = null
+        sharedViewModel.filteredWord = null
+        sharedViewModel.filteredMeaning = null
+        sharedViewModel.filteredSampleSen = null
+
 
 
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -118,7 +137,6 @@ class CarouselFragment : Fragment() {
             rvList.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             if (isFirstTime) {
-                val snapHelper = PagerSnapHelper()
                 snapHelper.attachToRecyclerView(rvList)
             }
 
@@ -141,16 +159,23 @@ class CarouselFragment : Fragment() {
                 Log.d("TAG", "shuffled $shuffledList")
                 carouselAdapter.submitList(shuffledList)
 
-                val id = shuffledList[0].id
-                val viewCount = shuffledList[0].displayCount
-                if (id != null && viewCount != null) {
-                    updateViewedCount(id, viewCount)
-                    shuffledList[0].displayCount =
-                        shuffledList[0].displayCount?.toInt()?.plus(1)
-                            ?.toFloat()
-                    carouselAdapter.submitList(shuffledList)
-                    carouselAdapter.notifyDataSetChanged()
+                if(shuffledList.isNotEmpty()) {
+                    val id = shuffledList[0].id
+                    val viewCount = shuffledList[0].displayCount
+                    if (id != null && viewCount != null) {
+                        updateViewedCount(id, viewCount)
+                        shuffledList[0].displayCount =
+                            shuffledList[0].displayCount?.toInt()?.plus(1)
+                                ?.toFloat()
+                        carouselAdapter.submitList(shuffledList)
+                        carouselAdapter.notifyDataSetChanged()
+                        if (sharedViewModel.isReadAloud) {
+                            textToSpeech.speak(shuffledList[0].wip, TextToSpeech.QUEUE_FLUSH, null)
+                        }
+                    }
                 }
+
+
 
 //                if(sharedViewModel.itemPos != null) {
 //                    var position = 0
@@ -167,9 +192,9 @@ class CarouselFragment : Fragment() {
             isFirstTime = false
         }
 
-        if(sharedViewModel.itemId != null)  {
+        if (sharedViewModel.itemId != null) {
             wipViewModel.getWIPById(sharedViewModel.itemId ?: 0)?.observe(viewLifecycleOwner) {
-                if(sharedViewModel.itemPos != null) {
+                if (sharedViewModel.itemPos != null) {
                     shuffledList[sharedViewModel.itemPos ?: 0].apply {
                         sr = it.sr
                         category = it.category
@@ -204,10 +229,23 @@ class CarouselFragment : Fragment() {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
                     val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-//                    Log.d("TAG", "First visible item position: $firstVisibleItemPosition")
+//                    Log.d("TAG", "First visible item position: ${layoutManager.findFirstCompletelyVisibleItemPosition()}")
 //                    Log.d("TAG", "Last visible item position: $lastVisibleItemPosition")
+                    val snapView = snapHelper.findSnapView(layoutManager)
+                    Log.d(
+                        "TAG",
+                        "snapped item pos: ${snapView?.let { layoutManager.getPosition(it) }}"
+                    )
                     currentPosition = firstVisibleItemPosition
                     if (firstVisibleItemPosition != RecyclerView.NO_POSITION) {
+
+                        if (sharedViewModel.isReadAloud) {
+                            textToSpeech.speak(
+                                shuffledList[lastVisibleItemPosition].wip,
+                                TextToSpeech.QUEUE_FLUSH,
+                                null
+                            )
+                        }
                         val id = shuffledList[firstVisibleItemPosition].id
                         val viewCount = shuffledList[firstVisibleItemPosition].displayCount
                         if (id != null && viewCount != null && firstVisibleItemPosition != previousPosition) {
@@ -238,8 +276,8 @@ class CarouselFragment : Fragment() {
                         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                         val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
                         val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-                        Log.d("TAG", "First visible item position: $firstVisibleItemPosition")
-                        Log.d("TAG", "Last visible item position: $lastVisibleItemPosition")
+//                        Log.d("TAG", "First visible item position: $firstVisibleItemPosition")
+//                        Log.d("TAG", "Last visible item position: $lastVisibleItemPosition")
                         val item = carouselAdapter.getWIPItem(lastVisibleItemPosition)
                         if (item !in sharedViewModel.leftSwipedItemList) {
                             isAdded = true
@@ -257,12 +295,15 @@ class CarouselFragment : Fragment() {
     }
 
     private fun startTimer() {
-        if (sharedViewModel.selectedHours != null && sharedViewModel.selectedMins != null) {
+        if (sharedViewModel.selectedHours != null && sharedViewModel.selectedMins != null && sharedViewModel.selectedSecs != null) {
             handler.post(runnable)
             mBinding.tvTimer.visibility = View.VISIBLE
+
+            // Convert hours, minutes, and seconds to milliseconds
             val totalTimeInMillis = sharedViewModel.selectedHours?.toLong()
                 ?.let { TimeUnit.HOURS.toMillis(it) }
                 ?.plus(TimeUnit.MINUTES.toMillis(sharedViewModel.selectedMins?.toLong() ?: 0))
+                ?.plus(TimeUnit.SECONDS.toMillis(sharedViewModel.selectedSecs?.toLong() ?: 0))
 
             object : CountDownTimer(totalTimeInMillis!!, 1000) {
                 override fun onTick(millisUntilFinished: Long) {
@@ -270,21 +311,20 @@ class CarouselFragment : Fragment() {
                     val minutesLeft = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) % 60
                     val secondsLeft = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) % 60
 
+                    // Format the time to HH:mm:ss
                     val formattedTime =
                         String.format("%02d:%02d:%02d", hoursLeft, minutesLeft, secondsLeft)
                     mBinding.tvTimer.text = formattedTime
                 }
 
                 override fun onFinish() {
-//                    if (isAdded && activity != null) {
-                        mBinding.tvTimer.text = "00:00:00"
-                        Toast.makeText(requireContext(), "Timer Finished", Toast.LENGTH_SHORT)
-                            .show()
-                        sharedViewModel.selectedHours = null
-                        sharedViewModel.selectedMins = null
-                        sharedViewModel.isTimerRunning = false
-                        findNavController().navigateUp()
-//                    }
+                    mBinding.tvTimer.text = "00:00:00"
+                    Toast.makeText(requireContext(), "Timer Finished", Toast.LENGTH_SHORT).show()
+                    sharedViewModel.selectedHours = null
+                    sharedViewModel.selectedMins = null
+                    sharedViewModel.selectedSecs = null
+                    sharedViewModel.isTimerRunning = false
+                    findNavController().navigateUp()
                 }
             }.start()
             sharedViewModel.isTimerRunning = true
@@ -292,6 +332,44 @@ class CarouselFragment : Fragment() {
             mBinding.tvTimer.visibility = View.INVISIBLE
         }
     }
+
+
+//    private fun startTimer() {
+//        if (sharedViewModel.selectedHours != null && sharedViewModel.selectedMins != null) {
+//            handler.post(runnable)
+//            mBinding.tvTimer.visibility = View.VISIBLE
+//            val totalTimeInMillis = sharedViewModel.selectedHours?.toLong()
+//                ?.let { TimeUnit.HOURS.toMillis(it) }
+//                ?.plus(TimeUnit.MINUTES.toMillis(sharedViewModel.selectedMins?.toLong() ?: 0))
+//
+//            object : CountDownTimer(totalTimeInMillis!!, 1000) {
+//                override fun onTick(millisUntilFinished: Long) {
+//                    val hoursLeft = TimeUnit.MILLISECONDS.toHours(millisUntilFinished)
+//                    val minutesLeft = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) % 60
+//                    val secondsLeft = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) % 60
+//
+//                    val formattedTime =
+//                        String.format("%02d:%02d:%02d", hoursLeft, minutesLeft, secondsLeft)
+//                    mBinding.tvTimer.text = formattedTime
+//                }
+//
+//                override fun onFinish() {
+////                    if (isAdded && activity != null) {
+//                        mBinding.tvTimer.text = "00:00:00"
+//                        Toast.makeText(requireContext(), "Timer Finished", Toast.LENGTH_SHORT)
+//                            .show()
+//                        sharedViewModel.selectedHours = null
+//                        sharedViewModel.selectedMins = null
+//                        sharedViewModel.isTimerRunning = false
+//                        findNavController().navigateUp()
+////                    }
+//                }
+//            }.start()
+//            sharedViewModel.isTimerRunning = true
+//        } else {
+//            mBinding.tvTimer.visibility = View.INVISIBLE
+//        }
+//    }
 
     private fun updateViewedCount(id: Int, viewCount: Float) {
         val count = viewCount + 1

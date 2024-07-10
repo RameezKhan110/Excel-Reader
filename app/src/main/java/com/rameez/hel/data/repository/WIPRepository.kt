@@ -49,4 +49,13 @@ class WIPRepository(private val wipDao: WIPDao) {
     suspend fun updateViewedCount(id: Int, viewCount: Float) {
         wipDao.updateViewedCount(id, viewCount)
     }
+
+    suspend fun deleteWIPById(id: Int) {
+        wipDao.deleteWIPbyId(id)
+    }
+
+    suspend fun deleteWholeCategory(categories: List<String?>) {
+        wipDao.deleteWholeCategory(categories)
+    }
+
 }

@@ -10,11 +10,15 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.rameez.hel.R
 import com.rameez.hel.SharedPref
 import com.rameez.hel.databinding.FragmentWIPDetailBinding
+import com.rameez.hel.viewmodel.SharedViewModel
 import com.rameez.hel.viewmodel.WIPViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 
@@ -25,6 +29,7 @@ class WIPDetailFragment : Fragment() {
     private lateinit var textToSpeech:  TextToSpeech
     private var word: String = ""
     private var id: Int = 0
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,8 +54,8 @@ class WIPDetailFragment : Fragment() {
                 txtSampleSentence.text = it?.sampleSentence
                 tvTags.text = it?.customTag?.joinToString(", ")
                 it?.customTag
-                if (it.readCount != null) txtReadCount.text = it.readCount!!.toInt().toString() + " times" else txtReadCount.text = "0 times"
-                if (it.displayCount != null) txtViewCount.text = it.displayCount!!.toInt().toString() + " times" else txtViewCount.text = "0 times"
+                if (it.readCount != null) txtReadCount.text = it.readCount?.toInt().toString() + " times" else txtReadCount.text = "0 times"
+                if (it.displayCount != null) txtViewCount.text = it.displayCount?.toInt().toString() + " times" else txtViewCount.text = "0 times"
 
             }
         }
@@ -70,6 +75,15 @@ class WIPDetailFragment : Fragment() {
             val bundle = Bundle()
             bundle.putInt("wip_id", id)
             findNavController().navigate(R.id.WIPEditFragment, bundle)
+        }
+
+        mBinding.tvDeleteWIP.setOnClickListener {
+            wipViewModel.deleteWIPById(id)
+            lifecycleScope.launch {
+//                delay(500)
+                sharedViewModel.isWIPDeleted = true
+                findNavController().navigateUp()
+            }
         }
         textToSpeech = TextToSpeech(requireContext()) { status ->
             if (status == TextToSpeech.SUCCESS){

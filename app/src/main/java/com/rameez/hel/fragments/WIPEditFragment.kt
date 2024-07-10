@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.rameez.hel.R
 import com.rameez.hel.data.model.WIPModel
 import com.rameez.hel.databinding.FragmentWIPEditBinding
-import com.rameez.hel.viewmodel.ShardViewModel
+import com.rameez.hel.viewmodel.SharedViewModel
 import com.rameez.hel.viewmodel.WIPViewModel
 
 class WIPEditFragment : Fragment() {
@@ -21,7 +21,7 @@ class WIPEditFragment : Fragment() {
     private lateinit var mBinding: FragmentWIPEditBinding
     private val wipViewModel: WIPViewModel by activityViewModels()
     private var tagsList = arrayListOf<String>()
-    private val sharedViewModel: ShardViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
 
     override fun onCreateView(

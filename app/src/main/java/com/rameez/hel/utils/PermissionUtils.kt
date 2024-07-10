@@ -7,13 +7,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 
 class PermissionUtils(fragment: Fragment) {
-    private var mActivity: AppCompatActivity? = null
-    private var mFragment: Fragment? = fragment
     var onPermissionResult: OnPermissionResult? = null
-    private var permissionsResultLauncher: ActivityResultLauncher<Array<String>>
-
-    init {
-        permissionsResultLauncher = fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { success ->
+    private var permissionsResultLauncher: ActivityResultLauncher<Array<String>> =
+        fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { success ->
             if (success.isEmpty().not()) {
                 if (success.containsValue(false)) {
                     onPermissionResult?.onPermissionDenied()
@@ -22,7 +18,6 @@ class PermissionUtils(fragment: Fragment) {
                 }
             }
         }
-    }
 
 
     fun requestPermissions(permissions: Array<String>): PermissionUtils {

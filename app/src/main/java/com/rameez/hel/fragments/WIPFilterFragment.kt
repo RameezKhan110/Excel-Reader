@@ -21,7 +21,7 @@ import com.rameez.hel.R
 import com.rameez.hel.adapter.CategoryAdapter
 import com.rameez.hel.adapter.CustomTagsAdapter
 import com.rameez.hel.databinding.FragmentWIPFilterBinding
-import com.rameez.hel.viewmodel.ShardViewModel
+import com.rameez.hel.viewmodel.SharedViewModel
 import com.rameez.hel.viewmodel.WIPViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,12 +40,15 @@ class WIPFilterFragment : Fragment() {
     private lateinit var filteredTagsList: MutableList<String>
     private var filteredReadCount: Float? = null
     private var filteredViewedCount: Float? = null
-    private val sharedViewModel: ShardViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val categoryAdapter = CategoryAdapter()
     private val categoriesList = arrayListOf<String>()
     private var readOperator: String? = null
     private var viewedOperator: String? = null
     private var isFirstTime = false
+    private var filteredWIP: String? = null
+    private var filteredMeaning: String? = null
+    private var filteredSampleSen: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +80,11 @@ class WIPFilterFragment : Fragment() {
         filteredViewedCount = sharedViewModel.viewedCount
         readOperator = sharedViewModel.readOperator
         viewedOperator = sharedViewModel.viewedOperator
+        filteredWIP = sharedViewModel.filteredWord
+        filteredMeaning = sharedViewModel.filteredMeaning
+        filteredSampleSen = sharedViewModel.filteredSampleSen
         mBinding.etReadCount.text = null
+        mBinding.etTimer.text = ""
         Log.d("TAG", "onCreate: ")
 
         setUpRecyclerView()
@@ -117,7 +124,28 @@ class WIPFilterFragment : Fragment() {
         mBinding.apply {
 
             btnTimer.setOnClickListener {
-                showTimePickerDialog()
+                val timePicker = com.rameez.hel.utils.TimePicker()
+                timePicker.setTitle("Select time")
+                //timePicker.includeHours = false
+                timePicker.setOnTimeSetOption("Set time") { hour, minute, second ->
+
+                    if (hour != 0 || minute != 0 || second != 0) {
+                        mBinding.etTimer.text = "$hour:$minute:$second"
+                        sharedViewModel.selectedHours = hour
+                        sharedViewModel.selectedMins = minute
+                        sharedViewModel.selectedSecs = second
+                    } else {
+                        Toast.makeText(requireContext(), "Time can't be zero", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+
+                }
+
+                /* To show the dialog you have to supply the "fragment manager"
+                    and a tag (whatever you want)
+                 */
+                timePicker.show(requireActivity().supportFragmentManager, "time_picker")
+//                showTimePickerDialog()
             }
 
             btnClearFilters.setOnClickListener {
@@ -164,15 +192,52 @@ class WIPFilterFragment : Fragment() {
                     filteredViewedCount = viewedCount
                 }
 
+                if (etWIP.text?.isNotBlank() == true) {
+                    filteredWIP = etWIP.text?.toString()?.trim()
+                }
+
+                if (etMeaning.text?.isNotBlank() == true) {
+                    filteredMeaning = etMeaning.text?.toString()?.trim()
+                }
+
+                if (etSampleSen.text?.isNotBlank() == true) {
+                    filteredSampleSen = etSampleSen.text?.toString()?.trim()
+                }
+
                 wipViewModel.getWIPs()?.observe(viewLifecycleOwner) { data ->
 
-                    if (filteredCategoryList.isNotEmpty() || filteredTagsList.isNotEmpty() || filteredReadCount != null || filteredViewedCount != null) {
+                    if (filteredCategoryList.isNotEmpty() ||
+                        filteredTagsList.isNotEmpty() ||
+                        filteredReadCount != null ||
+                        filteredViewedCount != null ||
+                        filteredWIP != null ||
+                        filteredMeaning != null ||
+                        filteredSampleSen != null) {
 
-                        var filteredWIPs = data
+                        var filteredData = data
                         CoroutineScope(Dispatchers.IO).launch {
 
-                            if (filteredCategoryList.isNotEmpty()) {
-                                filteredWIPs = filteredWIPs.filter { wipItem ->
+                            if(filteredWIP != null) {
+                                filteredData = filteredData.filter { wipItem ->
+                                    wipItem.wip == filteredWIP
+                                }
+                            }
+
+                            if(filteredMeaning != null && filteredData.isNotEmpty()) {
+                                filteredData = filteredData.filter { wipItem ->
+                                    wipItem.meaning == filteredMeaning
+                                }
+                            }
+
+                            if(filteredSampleSen != null && filteredData.isNotEmpty()) {
+                                filteredData = filteredData.filter { wipItem ->
+                                    wipItem.sampleSentence == filteredSampleSen
+                                }
+                            }
+
+
+                            if (filteredData.isNotEmpty() && filteredCategoryList.isNotEmpty()) {
+                                filteredData = filteredData.filter { wipItem ->
                                     wipItem.category?.lowercase(Locale.ROOT) in filteredCategoryList.map {
                                         it.lowercase(
                                             Locale.ROOT
@@ -182,8 +247,8 @@ class WIPFilterFragment : Fragment() {
                             }
 
                             // If the filtered list is not empty after category filtering, proceed to filter by tags
-                            if (filteredWIPs.isNotEmpty() && filteredTagsList.isNotEmpty()) {
-                                filteredWIPs = filteredWIPs.filter { wipItem ->
+                            if (filteredData.isNotEmpty() && filteredTagsList.isNotEmpty()) {
+                                filteredData = filteredData.filter { wipItem ->
                                     wipItem.customTag?.any { tag ->
                                         tag.lowercase(Locale.ROOT) in filteredTagsList.map {
                                             it.lowercase(
@@ -195,52 +260,53 @@ class WIPFilterFragment : Fragment() {
                                 }
                             }
 
-                            if (filteredWIPs.isNotEmpty() && filteredReadCount != null) {
-                                filteredWIPs = when (readOperator) {
+                            if (filteredData.isNotEmpty() && filteredReadCount != null) {
+                                filteredData = when (readOperator) {
                                     "=" -> {
-                                        filteredWIPs.filter { wipItem ->
+                                        filteredData.filter { wipItem ->
                                             wipItem.readCount == filteredReadCount
                                         }
                                     }
 
                                     ">" -> {
-                                        filteredWIPs.filter { wipItem ->
+                                        filteredData.filter { wipItem ->
                                             wipItem.readCount!! > filteredReadCount!!
                                         }
                                     }
 
                                     else -> {
-                                        filteredWIPs.filter { wipItem ->
+                                        filteredData.filter { wipItem ->
                                             wipItem.readCount!! < filteredReadCount!!
                                         }
                                     }
                                 }
                             }
 
-                            if (filteredWIPs.isNotEmpty() && filteredViewedCount != null) {
-                                filteredWIPs = when (viewedOperator) {
+                            if (filteredData.isNotEmpty() && filteredViewedCount != null) {
+                                filteredData = when (viewedOperator) {
                                     "=" -> {
-                                        filteredWIPs.filter { wipItem ->
+                                        filteredData.filter { wipItem ->
                                             wipItem.displayCount == filteredViewedCount
                                         }
                                     }
 
                                     ">" -> {
-                                        filteredWIPs.filter { wipItem ->
+                                        filteredData.filter { wipItem ->
                                             wipItem.displayCount!! > filteredViewedCount!!
                                         }
                                     }
 
                                     else -> {
-                                        filteredWIPs.filter { wipItem ->
+                                        filteredData.filter { wipItem ->
                                             wipItem.displayCount!! < filteredViewedCount!!
                                         }
                                     }
                                 }
                             }
 
-                            sharedViewModel.filteredWipsList = filteredWIPs.toMutableList()
-                            filteredWIPs.forEach {
+                            sharedViewModel.filteredWipsList = filteredData.toMutableList()
+                            sharedViewModel.isReadAloud = switchMaterial.isChecked
+                            filteredData.forEach {
                                 Log.d("TAG", "filteredWips $it")
                             }
                         }
@@ -272,7 +338,7 @@ class WIPFilterFragment : Fragment() {
                                     findNavController().navigate(R.id.carouselFragment)
                                 }
                             }
-                        } else if(filteredViewedCount != null) {
+                        } else if (filteredViewedCount != null) {
                             if (viewedOperator == null) {
                                 Toast.makeText(
                                     requireContext(),

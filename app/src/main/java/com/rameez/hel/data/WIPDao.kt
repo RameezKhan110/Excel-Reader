@@ -44,4 +44,11 @@ interface WIPDao {
 
     @Query("UPDATE WIP_LIST SET displayCount = :viewCount WHERE id = :id")
     suspend fun updateViewedCount(id: Int, viewCount: Float)
+
+    @Query("DELETE FROM WIP_LIST WHERE id = :id")
+    suspend fun deleteWIPbyId(id: Int)
+
+    @Query("DELETE FROM WIP_LIST WHERE category  IN (:categories)")
+    suspend fun deleteWholeCategory(categories: List<String?>)
+
 }

@@ -187,6 +187,15 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete WIP"
+            android:textColor="#DC1717"
+            android:id="@+id/tvDeleteWIP"
+            android:layout_marginTop="15dp">
+
+        </TextView>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -85,6 +85,16 @@ class WIPDetailFragment : Fragment() {
                 findNavController().navigateUp()
             }
         }
+
+        mBinding.dEncountered.setOnClickListener {
+            wipViewModel.resetEncountered(id)
+            mBinding.txtReadCount.text = "0"
+        }
+
+        mBinding.dViewed.setOnClickListener {
+            wipViewModel.resetViewed(id)
+            mBinding.txtViewCount.text = "0"
+        }
         textToSpeech = TextToSpeech(requireContext()) { status ->
             if (status == TextToSpeech.SUCCESS){
                 Log.d("TAG", "Initialization Success")

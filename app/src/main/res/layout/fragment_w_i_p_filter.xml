@@ -28,13 +28,29 @@
                 android:layout_height="48dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:id="@+id/etLimit"
+                android:padding="10dp"
+                android:inputType="number"
+                android:background="@drawable/edit_text_bg"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:hint="Set Limit"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/etWIP"
+                android:layout_marginTop="10dp"
                 android:padding="10dp"
                 android:background="@drawable/edit_text_bg"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
+                app:layout_constraintTop_toBottomOf="@id/etLimit"
                 android:hint="Enter WIP"
-                app:layout_constraintTop_toTopOf="parent" />
+                />
 
 
             <com.google.android.material.textfield.TextInputEditText

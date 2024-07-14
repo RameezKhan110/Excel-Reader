@@ -58,4 +58,20 @@ class WIPRepository(private val wipDao: WIPDao) {
         wipDao.deleteWholeCategory(categories)
     }
 
+    suspend fun resetEncountered(id: Int) {
+        wipDao.resetEncountered(0.0f, id)
+    }
+
+    suspend fun resetViewed(id: Int) {
+        wipDao.resetViewedCount(0.0f, id)
+    }
+
+    suspend fun resetEncounteredForCategories(categories: List<String>) {
+        wipDao.resetEncounteredForCategories(categories)
+    }
+
+    suspend fun resetViewedForCategories(categories: List<String>) {
+        wipDao.resetViewedForCategories(categories)
+    }
+
 }

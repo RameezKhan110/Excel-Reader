@@ -212,24 +212,25 @@ class WIPFilterFragment : Fragment() {
                         filteredViewedCount != null ||
                         filteredWIP != null ||
                         filteredMeaning != null ||
-                        filteredSampleSen != null) {
+                        filteredSampleSen != null
+                    ) {
 
                         var filteredData = data
                         CoroutineScope(Dispatchers.IO).launch {
 
-                            if(filteredWIP != null) {
+                            if (filteredWIP != null) {
                                 filteredData = filteredData.filter { wipItem ->
                                     wipItem.wip == filteredWIP
                                 }
                             }
 
-                            if(filteredMeaning != null && filteredData.isNotEmpty()) {
+                            if (filteredMeaning != null && filteredData.isNotEmpty()) {
                                 filteredData = filteredData.filter { wipItem ->
                                     wipItem.meaning == filteredMeaning
                                 }
                             }
 
-                            if(filteredSampleSen != null && filteredData.isNotEmpty()) {
+                            if (filteredSampleSen != null && filteredData.isNotEmpty()) {
                                 filteredData = filteredData.filter { wipItem ->
                                     wipItem.sampleSentence == filteredSampleSen
                                 }
@@ -304,64 +305,84 @@ class WIPFilterFragment : Fragment() {
                                 }
                             }
 
-                            sharedViewModel.filteredWipsList = filteredData.toMutableList()
+                            var limit = 0
+                            if(mBinding.etLimit.text.toString().isNotBlank()) {
+                                limit = mBinding.etLimit.text.toString().toInt()
+                            }
+                            if (etTimer.text.toString().isNotBlank()) {
+                                sharedViewModel.filteredWipsList = filteredData.toMutableList()
+                            } else {
+                                if (limit > 0) {
+                                    sharedViewModel.filteredWipsList =
+                                        filteredData.take(limit).toMutableList()
+                                }
+                            }
+
                             sharedViewModel.isReadAloud = switchMaterial.isChecked
                             filteredData.forEach {
                                 Log.d("TAG", "filteredWips $it")
                             }
                         }
                     }
-
-                    if (filteredCategoryList.isEmpty() && filteredTagsList.isEmpty() && filteredReadCount == null && filteredViewedCount == null) {
-                        Toast.makeText(requireContext(), "Nothing to filter", Toast.LENGTH_SHORT)
+                    if(mBinding.etLimit.text.toString().isNotBlank() && mBinding.etLimit.text.toString().toInt() == 0) {
+                        Toast.makeText(requireContext(), "Limit can't be zero", Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        if (filteredReadCount != null) {
-                            if (readOperator == null) {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Please choose operator",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                if (filteredViewedCount != null) {
-                                    if (viewedOperator == null) {
-                                        Toast.makeText(
-                                            requireContext(),
-                                            "Please choose operator",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        findNavController().navigate(R.id.carouselFragment)
-                                    }
-                                } else {
-                                    findNavController().navigate(R.id.carouselFragment)
-                                }
-                            }
-                        } else if (filteredViewedCount != null) {
-                            if (viewedOperator == null) {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Please choose operator",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                if (filteredReadCount != null) {
-                                    if (readOperator == null) {
-                                        Toast.makeText(
-                                            requireContext(),
-                                            "Please choose operator",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        findNavController().navigate(R.id.carouselFragment)
-                                    }
-                                } else {
-                                    findNavController().navigate(R.id.carouselFragment)
-                                }
-                            }
+                        if (filteredCategoryList.isEmpty() && filteredTagsList.isEmpty() && filteredReadCount == null && filteredViewedCount == null) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Nothing to filter",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
                         } else {
-                            findNavController().navigate(R.id.carouselFragment)
+                            if (filteredReadCount != null) {
+                                if (readOperator == null) {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Please choose operator",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    if (filteredViewedCount != null) {
+                                        if (viewedOperator == null) {
+                                            Toast.makeText(
+                                                requireContext(),
+                                                "Please choose operator",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        } else {
+                                            findNavController().navigate(R.id.carouselFragment)
+                                        }
+                                    } else {
+                                        findNavController().navigate(R.id.carouselFragment)
+                                    }
+                                }
+                            } else if (filteredViewedCount != null) {
+                                if (viewedOperator == null) {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Please choose operator",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    if (filteredReadCount != null) {
+                                        if (readOperator == null) {
+                                            Toast.makeText(
+                                                requireContext(),
+                                                "Please choose operator",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        } else {
+                                            findNavController().navigate(R.id.carouselFragment)
+                                        }
+                                    } else {
+                                        findNavController().navigate(R.id.carouselFragment)
+                                    }
+                                }
+                            } else {
+                                findNavController().navigate(R.id.carouselFragment)
+                            }
                         }
                     }
                 }

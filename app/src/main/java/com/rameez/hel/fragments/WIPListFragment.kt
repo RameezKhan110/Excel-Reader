@@ -14,6 +14,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -105,24 +107,25 @@ class WIPListFragment : Fragment() {
             }
         }
 
-        if(sharedViewModel.itemIdFromHome != null)  {
-            if(sharedViewModel.isWIPDeleted.not()) {
-                wipViewModel.getWIPById(sharedViewModel.itemIdFromHome ?: 0)?.observe(viewLifecycleOwner) {
-                    if(sharedViewModel.itemPosFromHome != null) {
-                        shuffledList[sharedViewModel.itemPosFromHome ?: 0].apply {
-                            sr = it.sr
-                            category = it.category
-                            wip = it.wip
-                            meaning = it.meaning
-                            sampleSentence = it.sampleSentence
-                            customTag = it.customTag
-                            readCount = it.readCount
-                            displayCount = it.displayCount
+        if (sharedViewModel.itemIdFromHome != null) {
+            if (sharedViewModel.isWIPDeleted.not()) {
+                wipViewModel.getWIPById(sharedViewModel.itemIdFromHome ?: 0)
+                    ?.observe(viewLifecycleOwner) {
+                        if (sharedViewModel.itemPosFromHome != null) {
+                            shuffledList[sharedViewModel.itemPosFromHome ?: 0].apply {
+                                sr = it.sr
+                                category = it.category
+                                wip = it.wip
+                                meaning = it.meaning
+                                sampleSentence = it.sampleSentence
+                                customTag = it.customTag
+                                readCount = it.readCount
+                                displayCount = it.displayCount
+                            }
+                            wipListAdapter.notifyItemChanged(sharedViewModel.itemPosFromHome ?: 0)
                         }
-                        wipListAdapter.notifyItemChanged(sharedViewModel.itemPosFromHome ?: 0)
-                    }
 
-                }
+                    }
             } else {
                 isFirstTime = true
                 sharedViewModel.isWIPDeleted = false
@@ -231,10 +234,12 @@ class WIPListFragment : Fragment() {
         val dialogView =
             LayoutInflater.from(requireContext()).inflate(R.layout.custom_dialog_layout, null)
 
-        val importWIP = dialogView.findViewById<TextView>(R.id.dWord)
-        val exportWIP = dialogView.findViewById<TextView>(R.id.dPhrase)
-        val addWIP = dialogView.findViewById<TextView>(R.id.dIdiom)
-        val deleteWIP = dialogView.findViewById<TextView>(R.id.dAllWips)
+        val importWIP = dialogView.findViewById<TextView>(R.id.rWord)
+        val exportWIP = dialogView.findViewById<TextView>(R.id.rPhrase)
+        val addWIP = dialogView.findViewById<TextView>(R.id.rIdiom)
+        val deleteWIP = dialogView.findViewById<TextView>(R.id.rAllWips)
+        val rEncountered = dialogView.findViewById<TextView>(R.id.rEncountered)
+        val rViewed = dialogView.findViewById<TextView>(R.id.rViewed)
 
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
             .setView(dialogView)
@@ -261,6 +266,16 @@ class WIPListFragment : Fragment() {
         deleteWIP.setOnClickListener {
             alertDialog.dismiss()
             showDeleteWIPDialog().show()
+        }
+
+        rEncountered.setOnClickListener {
+            alertDialog.dismiss()
+            showResetEncounteredDialog().show()
+        }
+
+        rViewed.setOnClickListener {
+            alertDialog.dismiss()
+            showResetViewedDialog().show()
         }
         return alertDialog
     }
@@ -503,12 +518,13 @@ class WIPListFragment : Fragment() {
 
     private fun showDeleteWIPDialog(): AlertDialog {
         val dialogView =
-            LayoutInflater.from(requireContext()).inflate(R.layout.custom_delete_wip_dialog_kayout, null)
+            LayoutInflater.from(requireContext())
+                .inflate(R.layout.custom_delete_wip_dialog_kayout, null)
 
-        val dWord = dialogView.findViewById<TextView>(R.id.dWord)
-        val dPhrase = dialogView.findViewById<TextView>(R.id.dPhrase)
-        val dIdiom = dialogView.findViewById<TextView>(R.id.dIdiom)
-        val dAllWips = dialogView.findViewById<TextView>(R.id.dAllWips)
+        val dWord = dialogView.findViewById<TextView>(R.id.rWord)
+        val dPhrase = dialogView.findViewById<TextView>(R.id.rPhrase)
+        val dIdiom = dialogView.findViewById<TextView>(R.id.rIdiom)
+        val dAllWips = dialogView.findViewById<TextView>(R.id.rAllWips)
 
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
             .setView(dialogView)
@@ -540,6 +556,77 @@ class WIPListFragment : Fragment() {
         dAllWips.setOnClickListener {
             alertDialog.dismiss()
             wipViewModel.dropTable()
+            isFirstTime = true
+        }
+
+
+        return alertDialog
+    }
+
+    private fun showResetEncounteredDialog(): AlertDialog {
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.custom_reset_dialog_layout, null)
+
+        val rWord = dialogView.findViewById<CheckBox>(R.id.rWord)
+        val rPhrase = dialogView.findViewById<CheckBox>(R.id.rPhrase)
+        val rIdiom = dialogView.findViewById<CheckBox>(R.id.rIdiom)
+        val bDone = dialogView.findViewById<Button>(R.id.bDone)
+
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+
+        val alertDialog = alertDialogBuilder.create()
+
+        bDone.setOnClickListener {
+            val list = arrayListOf<String>()
+            if (rWord.isChecked) {
+                list.add("word")
+            }
+            if (rPhrase.isChecked) {
+                list.add("phrase")
+            }
+            if (rIdiom.isChecked) {
+                list.add("idiom")
+            }
+
+            wipViewModel.resetEncounteredForCategories(list)
+            alertDialog.dismiss()
+            isFirstTime = true
+        }
+
+
+        return alertDialog
+    }
+
+
+    private fun showResetViewedDialog(): AlertDialog {
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.custom_reset_dialog_layout, null)
+
+        val rWord = dialogView.findViewById<CheckBox>(R.id.rWord)
+        val rPhrase = dialogView.findViewById<CheckBox>(R.id.rPhrase)
+        val rIdiom = dialogView.findViewById<CheckBox>(R.id.rIdiom)
+        val bDone = dialogView.findViewById<Button>(R.id.bDone)
+
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+
+        val alertDialog = alertDialogBuilder.create()
+
+        bDone.setOnClickListener {
+            val list = arrayListOf<String>()
+            if (rWord.isChecked) {
+                list.add("word")
+            }
+            if (rPhrase.isChecked) {
+                list.add("phrase")
+            }
+            if (rIdiom.isChecked) {
+                list.add("idiom")
+            }
+
+            wipViewModel.resetViewedForCategories(list)
+            alertDialog.dismiss()
             isFirstTime = true
         }
 

@@ -21,95 +21,61 @@
 
     </TextView>
 
-    <TextView
+    <CheckBox
         android:id="@+id/rWord"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:text="Import WIP"
+        android:text="Reset Word"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv1">
 
-    </TextView>
+    </CheckBox>
 
-    <TextView
+    <CheckBox
         android:id="@+id/rPhrase"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:text="Export WIP"
+        android:text="Reset Phrase"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rWord">
 
-    </TextView>
+    </CheckBox>
 
-    <TextView
+    <CheckBox
         android:id="@+id/rIdiom"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:text="Add WIP"
+        android:text="Reset Idiom"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rPhrase">
 
-    </TextView>
+    </CheckBox>
 
-    <TextView
-        android:id="@+id/rAllWips"
-        android:layout_width="0dp"
+    <Button
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:text="Delete WIPs"
-        android:textColor="@color/black"
-        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rIdiom">
-
-    </TextView>
-
-    <TextView
-        android:id="@+id/rEncountered"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:text="Reset Encountered"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rAllWips">
-
-    </TextView>
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Reset Viewed"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        android:layout_marginBottom="20dp"
-        android:id="@+id/rViewed"
-        android:layout_marginTop="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rEncountered"
+        app:layout_constraintTop_toBottomOf="@id/rIdiom"
+        android:layout_marginHorizontal="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="20dp">
-
-    </TextView>
+        android:text="Done"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/bDone"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -80,4 +80,21 @@ class WIPViewModel : ViewModel() {
         wipRepository?.deleteWholeCategory(categories)
     }
 
+    fun resetEncountered(id: Int) = viewModelScope.launch {
+        wipRepository?.resetEncountered(id)
+    }
+
+    fun resetViewed(id: Int) = viewModelScope.launch {
+        wipRepository?.resetViewed(id)
+    }
+
+    fun resetEncounteredForCategories(categories: List<String>) = viewModelScope.launch {
+        wipRepository?.resetEncounteredForCategories(categories)
+    }
+
+    fun resetViewedForCategories(categories: List<String>) = viewModelScope.launch {
+        wipRepository?.resetViewedForCategories(categories)
+    }
+
+
 }

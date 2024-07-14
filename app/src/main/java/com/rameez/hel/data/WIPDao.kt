@@ -51,4 +51,15 @@ interface WIPDao {
     @Query("DELETE FROM WIP_LIST WHERE category  IN (:categories)")
     suspend fun deleteWholeCategory(categories: List<String?>)
 
+    @Query("UPDATE WIP_LIST SET readCount = :readCount WHERE id = :id")
+    suspend fun resetEncountered(readCount: Float, id: Int)
+
+    @Query("UPDATE WIP_LIST SET displayCount = :displayCount WHERE id = :id")
+    suspend fun resetViewedCount(displayCount: Float, id: Int)
+
+    @Query("UPDATE WIP_LIST SET readCount = 0.0 WHERE category IN (:categories)")
+    suspend fun resetEncounteredForCategories(categories: List<String>)
+
+    @Query("UPDATE WIP_LIST SET displayCount = 0.0 WHERE category IN (:categories)")
+    suspend fun resetViewedForCategories(categories: List<String>)
 }

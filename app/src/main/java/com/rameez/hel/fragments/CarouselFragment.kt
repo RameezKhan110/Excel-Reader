@@ -25,6 +25,7 @@ import com.rameez.hel.data.model.WIPModel
 import com.rameez.hel.databinding.FragmentCarouselBinding
 import com.rameez.hel.viewmodel.SharedViewModel
 import com.rameez.hel.viewmodel.WIPViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -64,6 +65,14 @@ class CarouselFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        textToSpeech = TextToSpeech(requireContext()) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                Log.d("TAG", "Initialization Success")
+            } else {
+                Log.d("TAG", "Initialization Failed")
+            }
+        }
+        textToSpeech.language = Locale.US
     }
 
     override fun onCreateView(
@@ -80,15 +89,6 @@ class CarouselFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        textToSpeech = TextToSpeech(requireContext()) { status ->
-            if (status == TextToSpeech.SUCCESS) {
-                Log.d("TAG", "Initialization Success")
-            } else {
-                Log.d("TAG", "Initialization Failed")
-            }
-        }
-        textToSpeech.language = Locale.US
 
 //        SharedPref.isFilterScreenCancelled(requireContext(), false)
         sharedViewModel.categoryList.clear()
@@ -159,7 +159,7 @@ class CarouselFragment : Fragment() {
                 Log.d("TAG", "shuffled $shuffledList")
                 carouselAdapter.submitList(shuffledList)
 
-                if(shuffledList.isNotEmpty()) {
+                if (shuffledList.isNotEmpty()) {
                     val id = shuffledList[0].id
                     val viewCount = shuffledList[0].displayCount
                     if (id != null && viewCount != null) {
@@ -170,11 +170,20 @@ class CarouselFragment : Fragment() {
                         carouselAdapter.submitList(shuffledList)
                         carouselAdapter.notifyDataSetChanged()
                         if (sharedViewModel.isReadAloud) {
-                            textToSpeech.speak(shuffledList[0].wip, TextToSpeech.QUEUE_FLUSH, null)
+                            Log.d("TAG", "before speak")
+                            textToSpeech = TextToSpeech(requireContext()) { status ->
+                                if (status == TextToSpeech.SUCCESS) {
+                                    textToSpeech.speak(shuffledList[0].wip, TextToSpeech.QUEUE_FLUSH, null)
+                                    Log.d("TAG", "Initialization Success")
+                                } else {
+                                    Log.d("TAG", "Initialization Failed")
+                                }
+                            }
+                            textToSpeech.language = Locale.US
                         }
+                        Log.d("TAG", "after speak")
                     }
                 }
-
 
 
 //                if(sharedViewModel.itemPos != null) {
@@ -318,13 +327,16 @@ class CarouselFragment : Fragment() {
                 }
 
                 override fun onFinish() {
-                    mBinding.tvTimer.text = "00:00:00"
-                    Toast.makeText(requireContext(), "Timer Finished", Toast.LENGTH_SHORT).show()
-                    sharedViewModel.selectedHours = null
-                    sharedViewModel.selectedMins = null
-                    sharedViewModel.selectedSecs = null
-                    sharedViewModel.isTimerRunning = false
-                    findNavController().navigateUp()
+                    if(activity != null) {
+                        mBinding.tvTimer.text = "00:00:00"
+                        Toast.makeText(requireContext(), "Timer Finished", Toast.LENGTH_SHORT).show()
+                        sharedViewModel.selectedHours = null
+                        sharedViewModel.selectedMins = null
+                        sharedViewModel.selectedSecs = null
+                        sharedViewModel.isTimerRunning = false
+                        findNavController().navigateUp()
+                    }
+
                 }
             }.start()
             sharedViewModel.isTimerRunning = true
@@ -378,6 +390,11 @@ class CarouselFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        textToSpeech.shutdown()
 //        leftSwipedItemList.clear()
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 }

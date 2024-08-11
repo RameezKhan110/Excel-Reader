@@ -27,6 +27,7 @@ class SharedViewModel : ViewModel() {
     var itemIdFromHome: Int? = null
     var isReadAloud: Boolean = false
     var isWIPDeleted = false
+    var isWipAdded: Boolean = false
 
 
 }

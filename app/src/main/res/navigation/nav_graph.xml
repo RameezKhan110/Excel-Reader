@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/WIPListFragment">
+    app:startDestination="@id/splashFragment">
 
     <fragment
         android:id="@+id/WIPDetailFragment"
@@ -40,4 +40,9 @@
         android:name="com.rameez.hel.fragments.DeleteTagsFragment"
         android:label="fragment_delete_tags"
         tools:layout="@layout/fragment_delete_tags" />
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.rameez.hel.fragments.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" />
 </navigation>

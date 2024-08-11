@@ -220,19 +220,19 @@ class WIPFilterFragment : Fragment() {
 
                             if (filteredWIP != null) {
                                 filteredData = filteredData.filter { wipItem ->
-                                    wipItem.wip == filteredWIP
+                                    wipItem.wip?.contains(filteredWIP ?: "", ignoreCase = true) == true
                                 }
                             }
 
                             if (filteredMeaning != null && filteredData.isNotEmpty()) {
                                 filteredData = filteredData.filter { wipItem ->
-                                    wipItem.meaning == filteredMeaning
+                                    wipItem.meaning?.contains(filteredMeaning ?:  "", true) == true
                                 }
                             }
 
                             if (filteredSampleSen != null && filteredData.isNotEmpty()) {
                                 filteredData = filteredData.filter { wipItem ->
-                                    wipItem.sampleSentence == filteredSampleSen
+                                    wipItem.sampleSentence?.contains(filteredSampleSen ?: "", true) == true
                                 }
                             }
 
@@ -306,10 +306,12 @@ class WIPFilterFragment : Fragment() {
                             }
 
                             var limit = 0
-                            if(mBinding.etLimit.text.toString().isNotBlank()) {
+                            if (etLimit.text.toString().isNotBlank()) {
                                 limit = mBinding.etLimit.text.toString().toInt()
                             }
                             if (etTimer.text.toString().isNotBlank()) {
+                                sharedViewModel.filteredWipsList = filteredData.toMutableList()
+                            } else if (etTimer.text.toString().isBlank() && etLimit.text.toString().isBlank()) {
                                 sharedViewModel.filteredWipsList = filteredData.toMutableList()
                             } else {
                                 if (limit > 0) {
@@ -324,7 +326,9 @@ class WIPFilterFragment : Fragment() {
                             }
                         }
                     }
-                    if(mBinding.etLimit.text.toString().isNotBlank() && mBinding.etLimit.text.toString().toInt() == 0) {
+                    if (mBinding.etLimit.text.toString()
+                            .isNotBlank() && mBinding.etLimit.text.toString().toInt() == 0
+                    ) {
                         Toast.makeText(requireContext(), "Limit can't be zero", Toast.LENGTH_SHORT)
                             .show()
                     } else {

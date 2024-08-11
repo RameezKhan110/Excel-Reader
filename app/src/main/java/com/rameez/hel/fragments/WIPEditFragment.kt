@@ -116,6 +116,7 @@ class WIPEditFragment : Fragment() {
                         )
                         if(wip.isNotBlank() && category.isNotBlank()) {
                             wipViewModel.insertWIP(wipItem)
+                            sharedViewModel.isWipAdded = true
                             Toast.makeText(requireContext(), "New WIP added", Toast.LENGTH_SHORT).show()
                             findNavController().navigateUp()
                         } else {

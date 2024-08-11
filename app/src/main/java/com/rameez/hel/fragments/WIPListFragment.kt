@@ -14,10 +14,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -76,6 +78,7 @@ class WIPListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         if (::mBinding.isInitialized.not()) {
             isFirstTime = true
             mBinding = FragmentWIPListBinding.inflate(layoutInflater, container, false)
@@ -87,6 +90,14 @@ class WIPListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requireActivity().finish()
+            }
+
+        })
 
         permissionUtils = PermissionUtils(this)
         setUpRecyclerView()
@@ -131,6 +142,11 @@ class WIPListFragment : Fragment() {
                 sharedViewModel.isWIPDeleted = false
             }
 
+        }
+
+        if(sharedViewModel.isWipAdded) {
+            isFirstTime = true
+            sharedViewModel.isWipAdded = false
         }
 
 

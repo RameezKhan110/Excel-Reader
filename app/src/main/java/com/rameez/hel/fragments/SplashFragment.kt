@@ -33,7 +33,7 @@ class SplashFragment : Fragment() {
 
         lifecycleScope.launch {
             delay(2000)
-//            findNavController().navigate(R.id.WIPListFragment)
+            findNavController().navigate(R.id.WIPListFragment)
         }
 
         return mBinding.root
